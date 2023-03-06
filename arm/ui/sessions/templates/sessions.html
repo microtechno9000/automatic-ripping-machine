@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Sessions{% endblock %}
+
+{% block nav %}{{ super() }}{% endblock %}
+
+{% block content %}
+    <div class="container" style="max-width: initial!important;">
+        <div class="row">
+            <div class="col">
+                <div class="jumbotron" style="padding-top: 1rem;">
+                    <div class="col-sm-12  rounded text-center">
+                        <h2> ARM - Sessions </h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block footer %}{{ super() }}{% endblock %}
+{% block js %}
+    {{ super() }}
+{% endblock %}
