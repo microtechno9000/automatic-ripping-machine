@@ -1,0 +1,40 @@
+
+{% block session_help %}
+    <div class="tab-pane pt-5" id="sessionhelp" role="tabpanel" aria-labelledby="session-help-tab">
+        <div class="row">
+            <div class="col-sm-6">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <h6>ARM Default Data Types</h6>
+                    </li>
+                    <li class="list-group-item text-left">
+                        <p>DVD: ARM will rip new media as a movie</p>
+                        <p>Bluray: ARM will rip new media as a blueray movie</p>
+                        <p>Music: ARM will rip new media as a music</p>
+                        <p>Data: ARM will rip new media as a data disk (copy contents)</p>
+                        <p>ISO: ARM will rip new media as an ISO image of the disk</p>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-sm-6">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <h6>User Sessions</h6>
+                    </li>
+                    <li class="list-group-item text-left">
+                        <p>Movie - DVD: ARM session to rip DVD movies - <u>Type</u>: DVD</p>
+                        <p>Movie - Blueray: ARM sessionto rip Bluray movies - <u>Type</u>: Bluray</p>
+                        <p>TV - DVD: ARM session to rip DVD TV Series - <u>Type</u>: DVD</p>
+                        <p>TV - Blueray: ARM session to rip Bluray TV Series - <u>Type</u>: Bluray</p>
+                        <p>Music - MP3 : ARM session to rip music as mp3 - <u>Type</u>: Music</p>
+                        <p>Music - flac: ARM session to rip music as flac - <u>Type</u>: Music</p>
+                        <p>Data: ARM session to rip data disk - <u>Type</u>: Data</p>
+                        <p>HomeMovie - DVD: ARM session to rip dvd contents but with no title lookup - <u>Type</u>: DVD</p>
+                        <p>HomeMovie - Bluray: ARM session to rip dvd contents but with no title lookup - <u>Type</u>: Bluray</p>
+                        <p>ISO: ARM session to create ISO - <u>Type</u>: iso</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}
