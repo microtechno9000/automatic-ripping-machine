@@ -1,10 +1,6 @@
 ###########################################################
 # setup default directories and configs
-<<<<<<< HEAD
-FROM automaticrippingmachine/arm-dependencies:1.0.9 AS base
-=======
-FROM automaticrippingmachine/arm-dependencies:1.1.0 AS base
->>>>>>> parent of 4dff33f... Merge remote-tracking branch 'origin/main' into main
+FROM automaticrippingmachine/arm-dependencies:1.1.1 AS base
 
 LABEL org.opencontainers.image.source=https://github.com/automatic-ripping-machine/automatic-ripping-machine
 LABEL org.opencontainers.image.license=MIT
