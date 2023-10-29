@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Sessions{% endblock %}
+
+{% block nav %}{{ super() }}{% endblock %}
+
+{% block content %}
+    <div class="container" style="max-width: initial!important;">
+        <div class="row">
+            <div class="col">
+                <div class="jumbotron" style="padding-top: 1rem;">
+                    <div class="col-sm-12  rounded text-center">
+                        <h2> ARM - Sessions </h2>
+                        <p> Create and modify ARM sessions for each of the CD/DVD/Bluray drives on the system.</p>
+
+                        <!-- Nav Tabs -->
+                        <ul class="nav nav-tabs" id="sessionsTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link active" id="session-drives" data-toggle="tab" href="#sessiondrives" role="tab"
+                                aria-controls="session-drives-tab" aria-selected="true">Session Drives</a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link" id="session-edit" data-toggle="tab" href="#sessionedit" role="tab"
+                                aria-controls="session-edit-tab" aria-selected="false">Session Edit</a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link" id="session-help" data-toggle="tab" href="#sessionhelp" role="tab"
+                                aria-controls="session-help-tab" aria-selected="false">Session Help</a>
+                            </li>
+                        </ul>
+
+                        <!-- Tab Panes -->
+                        <div class="tab-content">
+                            <!-- General Info -->
+                            {% include 'session_drives.html' %}
+                            <!-- system information -->
+                            {% include 'session_edit.html' %}
+                            <!-- abcde config -->
+                            {% include 'session_help.html' %}
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block footer %}{{ super() }}{% endblock %}
+{% block js %}
+    {{ super() }}
+{% endblock %}

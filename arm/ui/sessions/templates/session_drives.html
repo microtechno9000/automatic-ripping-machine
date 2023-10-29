@@ -1,0 +1,66 @@
+
+{% block session_drives %}
+    <div class="tab-pane pt-5" id="sessiondrives" role="tabpanel" aria-labelledby="session-drives-tab">
+        <div class="container content">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="card">
+                        <div class="card-header text-center">
+                            <strong>CD Smasher</strong>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <h6 class="card-subtitle mb-2 text-muted">/dev/sr0 - CD Drive</h6>
+                                </li>
+                                <li class="list-group-item">
+                                    <label class="col-form-label px-1">Current Session:</label>
+                                    <label class="col-form-label px-1"><a href="#">Music - flac</a></label>
+                                </li>
+                            </ul>
+                            <a href="#" class="card-link">Edit Session</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="card">
+                        <div class="card-header text-center">
+                            <strong>DVD Melter</strong>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <h6 class="card-subtitle mb-2 text-muted">/dev/sr1 - DVD Drive</h6>
+                                </li>
+                                <li class="list-group-item">
+                                    <label class="col-form-label px-1">Current Session:</label>
+                                    <label class="col-form-label px-1"><a href="#">TV - DVD</a></label>
+                                </li>
+                            </ul>
+                            <a href="#" class="card-link">Edit Session</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="card">
+                        <div class="card-header text-center">
+                            <strong>Bluray Shredder</strong>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <h6 class="card-subtitle mb-2 text-muted">/dev/sr2 - Bluray Drive</h6>
+                                </li>
+                                <li class="list-group-item">
+                                    <label class="col-form-label px-1">Current Session:</label>
+                                    <label class="col-form-label px-1"><a href="#">Movie - Blueray</a></label>
+                                </li>
+                            </ul>
+                            <a href="#" class="card-link">Edit Session</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,190 @@
+
+{% block session_drives %}
+    <div class="tab-pane pt-5" id="sessionedit" role="tabpanel" aria-labelledby="session-drives-tab">
+        <div class="container content">
+            <div class="row">
+
+                <div class="col-sm-6">
+                    <div class="card">
+                        <div class="card-header text-center">
+                            <strong>Movie - DVD</strong>
+                        </div>
+                        <div class="card-body text-left">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <h6 class="card-subtitle mb-2 text-muted">ARM session to rip DVD movies</h6>
+                                </li>
+                                <li class="list-group-item">
+                                    <div class="form-group">
+                                        <label class="col-form-label px-1">Name:</label>
+                                        <input type="text" class="form-control" placeholder="Movie - DVD">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-form-label px-1">Description:</label>
+                                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="2">ARM session to rip DVD movies</textarea>
+                                    </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="sometitle">GET_VIDEO_TITLE: </span>
+                                        </div>
+                                        <input type="text" class="form-control" value="True">
+                                        <a class="popovers" onClick='return false;' href=""
+                                        data-content="text" rel="popover"
+                                        data-placement="top" data-original-title="text">
+                                            <img title="More information" src="{{ url_for('static', filename='/img/info.png') }}" width="30px"
+                                                height="35px" alt="More Info">
+                                        </a>
+                                    </div>
+                                    ...
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="sometitle">MINLENGTH:</span>
+                                        </div>
+                                        <input type="text" class="form-control" value="600">
+                                        <a class="popovers" onClick='return false;' href=""
+                                        data-content="text" rel="popover"
+                                        data-placement="top" data-original-title="text">
+                                            <img title="More information" src="{{ url_for('static', filename='/img/info.png') }}" width="30px"
+                                                height="35px" alt="More Info">
+                                        </a>
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="sometitle">MAXLENGTH: </span>
+                                        </div>
+                                        <input type="text" class="form-control" value="99999">
+                                        <a class="popovers" onClick='return false;' href=""
+                                        data-content="text" rel="popover"
+                                        data-placement="top" data-original-title="text">
+                                            <img title="More information" src="{{ url_for('static', filename='/img/info.png') }}" width="30px"
+                                                height="35px" alt="More Info">
+                                        </a>
+                                    </div>
+                                    ...
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="sometitle">HB_PRESET_DVD: </span>
+                                        </div>
+                                        <input type="text" class="form-control" value="HQ 720p30 Surround">
+                                        <a class="popovers" onClick='return false;' href=""
+                                        data-content="text" rel="popover"
+                                        data-placement="top" data-original-title="text">
+                                            <img title="More information" src="{{ url_for('static', filename='/img/info.png') }}" width="30px"
+                                                height="35px" alt="More Info">
+                                        </a>
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="sometitle">HB_ARGS_DVD: </span>
+                                        </div>
+                                        <input type="text" class="form-control" value="--subtitle scan -F">
+                                        <a class="popovers" onClick='return false;' href=""
+                                        data-content="text" rel="popover"
+                                        data-placement="top" data-original-title="text">
+                                            <img title="More information" src="{{ url_for('static', filename='/img/info.png') }}" width="30px"
+                                                height="35px" alt="More Info">
+                                        </a>
+                                    </div>
+                                </li>
+                            </ul>
+                            <a href="#" class="card-link">Edit Session</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="card">
+                        <div class="card-header text-center">
+                            <strong>TV - DVD</strong>
+                        </div>
+                        <div class="card-body text-left">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <h6 class="card-subtitle mb-2 text-muted">ARM session to rip DVD TV Series</h6>
+                                </li>
+                                <li class="list-group-item">
+                                    <div class="form-group">
+                                        <label class="col-form-label px-1">Name:</label>
+                                        <input type="text" class="form-control" placeholder="TV - DVD">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-form-label px-1">Description:</label>
+                                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="2">ARM session to rip DVD TV Series</textarea>
+                                    </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="sometitle">GET_VIDEO_TITLE: </span>
+                                        </div>
+                                        <input type="text" class="form-control" value="True">
+                                        <a class="popovers" onClick='return false;' href=""
+                                        data-content="text" rel="popover"
+                                        data-placement="top" data-original-title="text">
+                                            <img title="More information" src="{{ url_for('static', filename='/img/info.png') }}" width="30px"
+                                                height="35px" alt="More Info">
+                                        </a>
+                                    </div>
+                                    ...
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="sometitle">MINLENGTH:</span>
+                                        </div>
+                                        <input type="text" class="form-control" value="300">
+                                        <a class="popovers" onClick='return false;' href=""
+                                        data-content="text" rel="popover"
+                                        data-placement="top" data-original-title="text">
+                                            <img title="More information" src="{{ url_for('static', filename='/img/info.png') }}" width="30px"
+                                                height="35px" alt="More Info">
+                                        </a>
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="sometitle">MAXLENGTH: </span>
+                                        </div>
+                                        <input type="text" class="form-control" value="3600">
+                                        <a class="popovers" onClick='return false;' href=""
+                                        data-content="text" rel="popover"
+                                        data-placement="top" data-original-title="text">
+                                            <img title="More information" src="{{ url_for('static', filename='/img/info.png') }}" width="30px"
+                                                height="35px" alt="More Info">
+                                        </a>
+                                    </div>
+                                    ...
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="sometitle">HB_PRESET_DVD: </span>
+                                        </div>
+                                        <input type="text" class="form-control" value="HQ 1080p30 Surround">
+                                        <a class="popovers" onClick='return false;' href=""
+                                        data-content="text" rel="popover"
+                                        data-placement="top" data-original-title="text">
+                                            <img title="More information" src="{{ url_for('static', filename='/img/info.png') }}" width="30px"
+                                                height="35px" alt="More Info">
+                                        </a>
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="sometitle">HB_ARGS_DVD: </span>
+                                        </div>
+                                        <input type="text" class="form-control" value="--subtitle scan -F">
+                                        <a class="popovers" onClick='return false;' href=""
+                                        data-content="text" rel="popover"
+                                        data-placement="top" data-original-title="text">
+                                            <img title="More information" src="{{ url_for('static', filename='/img/info.png') }}" width="30px"
+                                                height="35px" alt="More Info">
+                                        </a>
+                                    </div>
+                                </li>
+                            </ul>
+                            <a href="#" class="card-link">Edit Session</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
