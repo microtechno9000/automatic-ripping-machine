@@ -9,7 +9,7 @@ from flask import render_template
 
 from arm.ui.sessions import route_sessions
 from arm.models import Sessions
-# from arm.models import SessionSettings
+from arm.models import SessionSettings
 from arm.models import SessionTypes
 
 # import arm.ui.utils as ui_utils
@@ -21,10 +21,6 @@ from arm.models import SessionTypes
 
 
 """
-TODO:
-- define workflow
-- define session_settings for each of the arm data types from arm.yaml
-
 Pages
     Create
     - sessions
@@ -143,7 +139,7 @@ def sessions():
     """
     Page - Sessions
     Method - GET
-    Overview - allows the user to update the session configuration
+    Overview - Session current state, help and link to edit pages for sessions
     """
 
     db_session_types = SessionTypes.SessionTypes.query.all()

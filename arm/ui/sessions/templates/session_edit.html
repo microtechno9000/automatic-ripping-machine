@@ -5,6 +5,27 @@
             <div class="row">
 
                 <div class="col-sm-6">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <h6>User Sessions</h6>
+                    </li>
+                    {% for session in db_sessions %}
+                        <li class="list-group-item text-left">
+                            <p><b>[{{ session.name }}]</b> - {{ session.description }}</p>
+                            <p>
+                                <u>Type</u> - {{ session.type.name }} | <u>Drive</u> -
+                                {% if session.drive.drive_id %}
+                                    {{ session.drive.name }} | {{ session.drive.mount }}
+                                {% else %}
+                                    Not assigned
+                                {% endif %}
+                            </p>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+                <div class="col-sm-6">
                     <div class="card">
                         <div class="card-header text-center">
                             <strong>Movie - DVD</strong>

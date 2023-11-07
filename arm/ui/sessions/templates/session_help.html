@@ -2,37 +2,50 @@
 {% block session_help %}
     <div class="tab-pane pt-5" id="sessionhelp" role="tabpanel" aria-labelledby="session-help-tab">
         <div class="row">
-            <div class="col-sm-6">
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                        <h6>User Sessions</h6>
-                    </li>
-                    {% for session in db_sessions %}
-                        <li class="list-group-item text-left">
-                            <p><b>[{{ session.name }}]</b> - {{ session.description }}</p>
-                            <p>
-                                <u>Type</u> - {{ session.type.name }} | <u>Drive</u> -
-                                {% if session.drive.drive_id %}
-                                    {{ session.drive.name }} | {{ session.drive.mount }}
-                                {% else %}
-                                    Not assigned
-                                {% endif %}
-                            </p>
-                        </li>
-                    {% endfor %}
-                </ul>
+            <div class="col">
+                <div class="card">
+                    <div class="card-header text-left">
+                        <strong>Session Overview</strong>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item text-left">
+                                ARM Sessions allow the user to configure specific ripping methods, settings and unique
+                                configurations/settings. The below diagram shows an overview of how ARM sessions work.
+                            </li>
+                            <li class="list-group-item text-centre">
+                                <img src="{{ url_for('static', filename='img/sessionmodel.png') }}"
+                                     alt="Image - ARM Session Model Overview"
+                                     width="80%vw"
+                                />
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
-            <div class="col-sm-6">
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                        <h6>ARM Default Data Types</h6>
-                    </li>
-                    {% for type in db_session_types %}
-                        <li class="list-group-item text-left">
-                            <b>[{{ type.name }}]</b> - {{ type.description }}
-                        </li>
-                    {% endfor %}
-                </ul>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-header text-left">
+                        <strong>ARM Ripping Methods</strong>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item text-left">
+                                The following ripping methods are predefined within ARM and are not configurable.
+                                Assigning one of these methods to a session defines which ripping method ARM will use
+                                when executing the rip. For example, creating a session with 'DVD' will use handbrake and
+                                the associated handbrake configuration scripts.
+                            </li>
+                            {% for type in db_session_types %}
+                                <li class="list-group-item text-left">
+                                    <b>[{{ type.name }}]</b> - {{ type.description }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
