@@ -8,6 +8,10 @@ from flask_login import login_required
 from flask import render_template
 
 from arm.ui.sessions import route_sessions
+from arm.models import Sessions
+from arm.models import SessionSettings
+from arm.models import SessionTypes
+
 import arm.ui.utils as ui_utils
 from arm.ui import app, db
 from arm.models import models as models
@@ -137,10 +141,14 @@ database
 @login_required
 def sessions():
     """
-    Page - settings
+    Page - Sessions
     Method - GET
-    Overview - allows the user to update the all configs of A.R.M without
-    needing to open a text editor
+    Overview - allows the user to update the session configuration
     """
 
-    return render_template('sessions.html')
+    db_session_types = SessionTypes.SessionTypes.query.all()
+    db_sessions = Sessions.Sessions.query.all()
+
+    return render_template('sessions.html',
+                           db_session_types=db_session_types,
+                           db_sessions=db_sessions)
