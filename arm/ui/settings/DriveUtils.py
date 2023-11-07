@@ -54,7 +54,7 @@ def drives_update():
     drive_count = models.SystemDrives.query.count()
 
     for drive_mount in udev_drives:
-        # Check drive doesnt already exist
+        # Check drive doesn't already exist
         if not models.SystemDrives.query.filter_by(mount=drive_mount).first():
             # New drive, set previous job to none
             last_job = None
@@ -70,7 +70,6 @@ def drives_update():
             app.logger.debug("****** End Drive Information ******")
             db.session.add(db_drive)
             db.session.commit()
-            db_drive = None
             i += 1
         else:
             i += 1

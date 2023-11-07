@@ -1,4 +1,7 @@
 from __future__ import with_statement
+
+import logging
+
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
@@ -64,7 +67,7 @@ def run_migrations_online():
             script = directives[0]
             if script.upgrade_ops.is_empty():
                 directives[:] = []
-                logger.info('No changes in schema detected.')
+                logging.info('No changes in schema detected.')
 
     engine = engine_from_config(config.get_section(config.config_ini_section),
                                 prefix='sqlalchemy.',

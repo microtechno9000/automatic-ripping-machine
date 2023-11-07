@@ -40,6 +40,7 @@ def arm_notification():
     """
     function to display all current notifications
     """
+    # noinspection PyUnresolvedReferences
     notifications_new = models.Notifications.query.filter_by(cleared='0').order_by(models.Notifications.id.desc()).all()
 
     if len(notifications_new) != 0:

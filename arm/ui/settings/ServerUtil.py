@@ -10,7 +10,7 @@ from arm.ui import app
 from flask import flash
 
 
-class ServerUtil():
+class ServerUtil:
     cpu_util = 0.0
     cpu_temp = 0.0
     memory_free = 0.0
@@ -87,6 +87,7 @@ class ServerUtil():
         app.logger.debug(f"Server Mem Used:  {self.memory_used}")
         app.logger.debug(f"Server Mem Percent:  {self.memory_percent}")
 
+    # noinspection PyMethodMayBeStatic
     def get_disk_space(self, filepath):
         # Hard drive space
         try:

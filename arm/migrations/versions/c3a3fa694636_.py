@@ -110,7 +110,7 @@ def upgrade():
                     sa.Column('PO_USER_KEY', sa.String(length=64), nullable=True),
                     sa.Column('PO_APP_KEY', sa.String(length=64), nullable=True),
                     sa.Column('OMDB_API_KEY', sa.String(length=64), nullable=True),
-                    sa.ForeignKeyConstraint(['job_id'], ['job.job_id'], ),
+                    sa.ForeignKeyConstraint(['job_id'], ['job.job_id'] ),
                     sa.PrimaryKeyConstraint('CONFIG_ID')
                     )
     op.create_table('track',
