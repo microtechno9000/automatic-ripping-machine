@@ -8,9 +8,10 @@ from flask_login import login_required
 from flask import render_template
 
 from arm.ui.sessions import route_sessions
-from arm.models import Sessions
-from arm.models import SessionSettings
-from arm.models import SessionTypes
+from arm.models.Sessions import Sessions
+from arm.models.SessionSettings import SessionSettings
+from arm.models.SessionTypes import SessionTypes
+from arm.models.models import SystemDrives
 
 # import arm.ui.utils as ui_utils
 # from arm.ui import app, db
@@ -141,10 +142,13 @@ def sessions():
     Method - GET
     Overview - Session current state, help and link to edit pages for sessions
     """
-
-    db_session_types = SessionTypes.SessionTypes.query.all()
-    db_sessions = Sessions.Sessions.query.all()
+    # Return the current session data
+    db_session_types = SessionTypes.query.all()
+    db_sessions = Sessions.query.all()
+    # Return the current list of system drives available to ARM
+    db_system_drives = SystemDrives.query.all()
 
     return render_template('sessions.html',
                            db_session_types=db_session_types,
-                           db_sessions=db_sessions)
+                           db_sessions=db_sessions,
+                           db_system_drives=db_system_drives)

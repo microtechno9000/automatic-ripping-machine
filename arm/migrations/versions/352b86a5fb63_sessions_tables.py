@@ -221,12 +221,12 @@ def upgrade():
         sa.Column('type_id', sa.Integer(), nullable=False),
         sa.Column('valid', sa.Boolean(), nullable=False),
         sa.Column('settings_id', sa.Integer(), nullable=False),
-        sa.Column('drive_id', sa.Integer(), nullable=True),
+        # sa.Column('drive_id', sa.Integer(), nullable=True),
         sa.Column('name', sa.String(length=100), nullable=False),
         sa.Column('description', sa.String(length=1000), nullable=False),
         sa.ForeignKeyConstraint(['type_id'], ['session_types.id']),
         sa.ForeignKeyConstraint(['settings_id'], ['session_settings.id']),
-        sa.ForeignKeyConstraint(['drive_id'], ['system_drives.drive_id'])
+        # sa.ForeignKeyConstraint(['drive_id'], ['system_drives.drive_id'])
     )
     op.bulk_insert(new_db_sessions,
                    [

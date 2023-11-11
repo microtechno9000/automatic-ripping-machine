@@ -16,6 +16,9 @@ from flask_login import LoginManager, current_user, login_user, UserMixin  # noq
 from arm.ripper import music_brainz
 from arm.ui import db
 import arm.config.config as cfg
+from arm.models.Sessions import Sessions
+from arm.models.SessionTypes import SessionTypes
+from arm.models.SessionSettings import SessionSettings
 
 hidden_attribs = ("OMDB_API_KEY", "EMBY_USERID", "EMBY_PASSWORD",
                   "EMBY_API_KEY", "PB_KEY", "IFTTT_KEY", "PO_KEY",
@@ -578,10 +581,12 @@ class SystemDrives(db.Model):
     job_id_current = db.Column(db.Integer, db.ForeignKey("job.job_id"))
     job_id_previous = db.Column(db.Integer, db.ForeignKey("job.job_id"))
     description = db.Column(db.Unicode(200))
+    session_id = db.Column(db.Integer, db.ForeignKey("sessions.id"))
 
     # relationship - join current and previous jobs to the jobs table
     job_current = db.relationship("Job", backref="Current", foreign_keys=[job_id_current])
     job_previous = db.relationship("Job", backref="Previous", foreign_keys=[job_id_previous])
+    session = db.relationship("Sessions", backref="Record", foreign_keys=[session_id])
 
     def __init__(self, name, mount, job, job_previous, description):
         self.name = name
