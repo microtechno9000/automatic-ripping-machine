@@ -8,10 +8,10 @@ from flask_login import login_required
 from flask import render_template
 
 from arm.ui.sessions import route_sessions
-from arm.models.Sessions import Sessions
-from arm.models.SessionSettings import SessionSettings
-from arm.models.SessionTypes import SessionTypes
-from arm.models.models import SystemDrives
+from arm.models.sessions import Sessions
+from arm.models.session_settings import SessionSettings
+from arm.models.session_types import SessionTypes
+from arm.models.system_drives import SystemDrives
 
 # import arm.ui.utils as ui_utils
 # from arm.ui import app, db
