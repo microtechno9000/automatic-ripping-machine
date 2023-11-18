@@ -20,13 +20,11 @@ def upgrade():
     """
     add column to system_drives table, linking any current sessions to the session table
     """
-    op.add_column('system_drives',
-                  sa.Column('session_id', sa.Integer(), sa.ForeignKey('sessions.id')),
-                  # sa.ForeignKeyConstraint(('session_id',), ['sessions.id'],),
-                  )
-    # op.create_foreign_key('session_id', 'system_drives', 'sessions', ['session_id'], ['id'])
-#     fix - https://alembic.sqlalchemy.org/en/latest/ops.html#alembic.operations.Operations.create_foreign_key
+    with op.batch_alter_table('system_drives') as batch_mod:
+        batch_mod.add_column(sa.Column('session_id', sa.Integer(), nullable=False))
+        batch_mod.create_foreign_key('session_fk_1', 'sessions', ['session_id'], ['id'])
 
 
 def downgrade():
-    op.drop_column('system_drives', 'session_id')
+    op.drop_constraint('session_id_fk_1', 'system_drives', type_='foreignkey')
+    # op.drop_column('system_drives', 'session_id')

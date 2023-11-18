@@ -573,6 +573,8 @@ class SystemDrives(db.Model):
     """
     Class to hold the system cd/dvd/blueray drive information
     """
+    __tablename__ = 'system_drives'
+
     drive_id = db.Column(db.Integer, index=True, primary_key=True)
     name = db.Column(db.String(100))
     type = db.Column(db.String(20))
@@ -581,12 +583,12 @@ class SystemDrives(db.Model):
     job_id_current = db.Column(db.Integer, db.ForeignKey("job.job_id"))
     job_id_previous = db.Column(db.Integer, db.ForeignKey("job.job_id"))
     description = db.Column(db.Unicode(200))
-    session_id = db.Column(db.Integer, db.ForeignKey("sessions.id"))
+    session_id = db.Column(db.ForeignKey("sessions.id"))
 
     # relationship - join current and previous jobs to the jobs table
     job_current = db.relationship("Job", backref="Current", foreign_keys=[job_id_current])
     job_previous = db.relationship("Job", backref="Previous", foreign_keys=[job_id_previous])
-    session = db.relationship("Sessions", backref="Record", foreign_keys=[session_id])
+    session = db.relationship("Sessions", foreign_keys=[session_id])
 
     def __init__(self, name, mount, job, job_previous, description):
         self.name = name
@@ -596,6 +598,7 @@ class SystemDrives(db.Model):
         self.job_id_previous = job_previous
         self.description = description
         self.drive_type()
+        self.session_id = 0
 
     def drive_type(self):
         """find the Drive type (CD, DVD, Blueray) from the udev values"""
