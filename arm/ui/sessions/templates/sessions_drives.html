@@ -1,0 +1,52 @@
+
+{% block session_drives %}
+    <div class="tab-pane pt-5 active" id="sessiondrives" role="tabpanel" aria-labelledby="session-drives-tab">
+        <div class="container content">
+            <div class="row">
+                {% set ns = namespace(counter=0) %}
+                {% for session in db_sessions %}
+                    {% if session.drive_id %}
+                        {% set ns.counter = ns.counter + 1 %}
+                        <div class="col-sm-6">
+                            <div class="card">
+                                <div class="card-header text-center">
+                                    <strong>{{ session.drive.name }}</strong>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item">
+                                            <label class="col-form-label px-1">
+                                                Mount: {{ session.drive.mount }}
+                                            </label>
+                                            <label class="col-form-label px-1">
+                                                Drive Type: {{ session.drive.type }}
+                                            </label>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <label class="col-form-label px-1">
+                                                Current Session: <a href="#">{{ session.name }}</a>
+                                            </label>
+                                            <label class="col-form-label px-1">
+                                                Enabled:
+                                                    {% if session.valid %}
+                                                        <span class="text-success"> True </span>
+                                                    {% else %}
+                                                        <span class="text-danger"> False </span>
+                                                    {% endif %}
+                                            </label>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                {% if ns.counter == 0 %}
+                        <span>
+                            No drives assigned to any sessions
+                        </span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

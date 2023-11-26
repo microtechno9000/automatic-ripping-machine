@@ -30,12 +30,12 @@
 
                         <!-- Tab Panes -->
                         <div class="tab-content">
-                            <!-- General Info -->
-                            {% include 'session_drives.html' %}
-                            <!-- system information -->
-                            {% include 'session_edit.html' %}
-                            <!-- abcde config -->
-                            {% include 'session_help.html' %}
+                            <!-- Active drives with sessions -->
+                            {% include 'sessions_drives.html' %}
+                            <!-- session edit tab -->
+                            {% include 'sessions_edit.html' %}
+                            <!-- session help tab -->
+                            {% include 'sessions_help.html' %}
                         </div>
                     </div>
                 </div>
@@ -47,4 +47,20 @@
 {% block footer %}{{ super() }}{% endblock %}
 {% block js %}
     {{ super() }}
+     <script>
+         document.addEventListener('DOMContentLoaded', function () {
+          // Get the form element
+          var form = document.getElementById('sessionEdits');
+
+          // Add change event listeners to form elements
+          form.addEventListener('change', function () {
+            saveForm();
+          });
+        });
+
+        function saveForm() {
+          // Todo: push the data to ARM API for update
+          console.log('Form data has changed. Sending data to the server...');
+        }
+    </script>
 {% endblock %}

@@ -1,29 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Sessions{% endblock %}
 
-{% block session_drives %}
-    <div class="tab-pane pt-5" id="sessionedit" role="tabpanel" aria-labelledby="session-drives-tab">
-        <div class="container content">
-            <div class="row">
+{% block nav %}{{ super() }}{% endblock %}
 
-                <div class="col-sm-6">
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                        <h6>User Sessions</h6>
-                    </li>
-                    {% for session in db_sessions %}
-                        <li class="list-group-item text-left">
-                            <p><b>[{{ session.name }}]</b> - {{ session.description }}</p>
-                            <p>
-                                <u>Type</u> - {{ session.type.name }} | <u>Drive</u> -
-                                {% if session.drive.drive_id %}
-                                    {{ session.drive.name }} | {{ session.drive.mount }}
-                                {% else %}
-                                    Not assigned
-                                {% endif %}
-                            </p>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
+{% block content %}
+    <div class="container" style="max-width: initial!important;">
+        <div class="row">
+            <div class="col">
+                <div class="jumbotron" style="padding-top: 1rem;">
+                    <div class="col-sm-12  rounded text-center">
+
+                        Edit: {{ db_session.name }}
+
 
                 <div class="col-sm-6">
                     <div class="card">
@@ -205,7 +193,14 @@
                     </div>
                 </div>
 
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
+{% endblock %}
+{% block footer %}{{ super() }}{% endblock %}
+{% block js %}
+    {{ super() }}
 {% endblock %}

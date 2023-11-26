@@ -13,13 +13,6 @@ from arm.models.session_settings import SessionSettings
 from arm.models.session_types import SessionTypes
 from arm.models.system_drives import SystemDrives
 
-# import arm.ui.utils as ui_utils
-# from arm.ui import app, db
-# from arm.models import models as models
-# import arm.config.config as cfg
-# from arm.ui.forms import SettingsForm, UiSettingsForm, AbcdeForm, SystemInfoDrives
-# from arm.ui.settings.ServerUtil import ServerUtil
-
 
 """
 Pages
@@ -152,3 +145,16 @@ def sessions():
                            db_session_types=db_session_types,
                            db_sessions=db_sessions,
                            db_system_drives=db_system_drives)
+
+@route_sessions.route('/sessions/edit/<id>')
+@login_required
+def session_edit(id):
+    """
+    Page - Sessions
+    Method - GET
+    Overview - Session editor
+    """
+    db_session = Sessions.query.where(id=id).first()
+
+    return render_template('sessions_edit.html',
+                           db_session=db_session)
