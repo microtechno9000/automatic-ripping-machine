@@ -178,6 +178,7 @@ def session_update_status():
     """
     form = SessionStatusForm()
     status = False
+    clear = False
     response = "data value passed not valid"
 
     if form.validate():
@@ -197,12 +198,17 @@ def session_update_status():
             db.session.commit()
 
         elif name == 'drive':
-            db_session.drive_id = int(data['value'])
-            response = f"Updated Session {row_id} drive"
-            status = True
-            app.logger.debug(f"Session db update - drive_id: {db_session.drive_id}")
-            db.session.commit()
+            # Check another session hasn't been asigned to a drive
+            if Sessions.query.filter_by(drive_id=int(data['value'])).count() == 0:
+                db_session.drive_id = int(data['value'])
+                response = f"Updated Session {row_id} drive"
+                status = True
+                app.logger.debug(f"Session db update - drive_id: {db_session.drive_id}")
+                db.session.commit()
+            else:
+                response = f"Unable to assign Drive to Session #{row_id}, drive already assigned"
+                clear = True
 
     app.logger.info("Updated session information")
 
-    return {'success': status, 'response': response}
+    return {'success': status, 'response': response, 'clear': clear}

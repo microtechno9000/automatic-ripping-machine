@@ -89,6 +89,9 @@
                     document.getElementById('successAlert').style.display = 'block';
                     document.getElementById('errorAlert').style.display = 'none';
                 } else {
+                    if (data.clear === true) {
+                        document.getElementById(field.id).selectedIndex = 0;
+                    }
                     document.getElementById('errorAlert').innerHTML = `<strong>Error:</strong> ${data.response}`;
                     document.getElementById('errorAlert').style.display = 'block';
                     document.getElementById('successAlert').style.display = 'none';
