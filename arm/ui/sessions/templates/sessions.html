@@ -9,8 +9,8 @@
             <div class="col">
                 <div class="jumbotron" style="padding-top: 1rem;">
                     <div class="col-sm-12  rounded text-center">
-                        <h2> ARM - Sessions </h2>
-                        <p> Create and modify ARM sessions for each of the CD/DVD/Bluray drives on the system.</p>
+                        <h2> Sessions </h2>
+                        <p> Create and modify ARM sessions for each of the CD/DVD/Bluray drives on the system. Help can be found in the Session Overview and Help tab below.</p>
 
                         <!-- Nav Tabs -->
                         <ul class="nav nav-tabs" id="sessionsTab" role="tablist">
@@ -74,7 +74,7 @@
 
             console.log('Field with ID ' + field.id + ' has changed. New value: ' + formData[field.id]);
 
-            fetch('/sessions/update', {
+            fetch('/session/update', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

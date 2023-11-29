@@ -131,7 +131,7 @@ database
 """
 
 
-@route_sessions.route('/sessions')
+@route_sessions.route('/session')
 @login_required
 def sessions():
     """
@@ -154,7 +154,7 @@ def sessions():
                            form=form)
 
 
-@route_sessions.route('/sessions/edit/<session_id>')
+@route_sessions.route('/session/edit/<session_id>')
 @login_required
 def session_edit(session_id):
     """
@@ -168,7 +168,7 @@ def session_edit(session_id):
                            db_session=db_session)
 
 
-@route_sessions.route('/sessions/update', methods=['POST'])
+@route_sessions.route('/session/update', methods=['POST'])
 @login_required
 def session_update_status():
     """
@@ -198,16 +198,23 @@ def session_update_status():
             db.session.commit()
 
         elif name == 'drive':
-            # Check another session hasn't been asigned to a drive
-            if Sessions.query.filter_by(drive_id=int(data['value'])).count() == 0:
-                db_session.drive_id = int(data['value'])
-                response = f"Updated Session {row_id} drive"
+            # Check another session hasn't been assigned to a drive
+            if int(data['value']) == 0:
+                db_session.drive_id = None
+                response = f"Updated Session {row_id} clearing drive"
                 status = True
-                app.logger.debug(f"Session db update - drive_id: {db_session.drive_id}")
+                app.logger.debug("Session db update - cleared drive")
                 db.session.commit()
             else:
-                response = f"Unable to assign Drive to Session #{row_id}, drive already assigned"
-                clear = True
+                if Sessions.query.filter_by(drive_id=int(data['value'])).count() == 0:
+                    db_session.drive_id = int(data['value'])
+                    response = f"Updated Session {row_id} drive"
+                    status = True
+                    app.logger.debug(f"Session db update - drive_id: {db_session.drive_id}")
+                    db.session.commit()
+                else:
+                    response = f"Unable to assign Drive to Session #{row_id}, drive already assigned"
+                    clear = True
 
     app.logger.info("Updated session information")
 
