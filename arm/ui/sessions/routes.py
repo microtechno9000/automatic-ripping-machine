@@ -2,16 +2,20 @@
 ARM route blueprint for sessions pages
 Covers
 - sessions [GET]
+- sessions/edit [GET]
+- sessions/update [POST]
 """
 
 from flask_login import login_required
-from flask import render_template
+from flask import render_template, request
 
+from arm.ui import app, db
 from arm.ui.sessions import route_sessions
 from arm.models.sessions import Sessions
 from arm.models.session_settings import SessionSettings
 from arm.models.session_types import SessionTypes
 from arm.models.system_drives import SystemDrives
+from .forms import SessionStatusForm
 
 
 """
@@ -141,20 +145,64 @@ def sessions():
     # Return the current list of system drives available to ARM
     db_system_drives = SystemDrives.query.all()
 
+    form = SessionStatusForm()
+
     return render_template('sessions.html',
                            db_session_types=db_session_types,
                            db_sessions=db_sessions,
-                           db_system_drives=db_system_drives)
+                           db_system_drives=db_system_drives,
+                           form=form)
 
-@route_sessions.route('/sessions/edit/<id>')
+
+@route_sessions.route('/sessions/edit/<session_id>')
 @login_required
-def session_edit(id):
+def session_edit(session_id):
     """
     Page - Sessions
     Method - GET
     Overview - Session editor
     """
-    db_session = Sessions.query.where(id=id).first()
+    db_session = Sessions.query.where(id=session_id).first()
 
-    return render_template('sessions_edit.html',
+    return render_template('sessions_status.html',
                            db_session=db_session)
+
+
+@route_sessions.route('/sessions/update', methods=['POST'])
+@login_required
+def session_update_status():
+    """
+    Page - Session Update
+    Method - POST
+    Overview - Take user updates from Session Edit tab for active and drive changes
+    """
+    form = SessionStatusForm()
+    status = False
+    response = "data value passed not valid"
+
+    if form.validate():
+        data = request.get_json()
+        app.logger.debug(f"Session Status update: {data}")
+
+        # Get the row ID from json, load value from database
+        [name, row_id] = data['id'].split('_')
+        db_session = Sessions.query.filter_by(id=int(row_id)).first()
+        app.logger.debug(f"Session name: {name} row: {row_id} value: {data['value']}")
+
+        if name == 'valid':
+            db_session.valid = data['value']
+            response = f"Updated Session {row_id} status"
+            status = True
+            app.logger.debug(f"Session db update - id: {db_session.valid}")
+            db.session.commit()
+
+        elif name == 'drive':
+            db_session.drive_id = int(data['value'])
+            response = f"Updated Session {row_id} drive"
+            status = True
+            app.logger.debug(f"Session db update - drive_id: {db_session.drive_id}")
+            db.session.commit()
+
+    app.logger.info("Updated session information")
+
+    return {'success': status, 'response': response}

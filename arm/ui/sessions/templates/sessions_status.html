@@ -1,7 +1,14 @@
 
 {% block session_drives %}
-    <div class="tab-pane pt-5" id="sessionedit" role="tabpanel" aria-labelledby="session-drives-tab">
+    <div class="tab-pane pt-5" id="sessionstatus" role="tabpanel" aria-labelledby="session-status-tab">
+        <!-- DIVs for update alert/status -->
+        <div class="alert alert-success" role="alert" id="successAlert" style="display: none;">
+        </div>
+        <div class="alert alert-danger" role="alert" id="errorAlert" style="display: none;">
+        </div>
+
         <form class="container content" id="sessionEdits">
+            {{ form.hidden_tag() }}
             <table class="table table-hover table-sm ">
                 <caption>ARM Sessions Editor, assign drives and active status.</caption>
                 <thead class="thead-light">
@@ -11,7 +18,7 @@
                         <th scope="col">Active</th>
                         <th scope="col">Disc</th>
                         <th scope="col">Description</th>
-                        <th scope="col">Edit</th>
+                        <th scope="col"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -21,19 +28,23 @@
                             <td class="text-left font-weight-normal">{{ session.name }}</td>
                             <td class="font-weight-normal">
                                 {% if session.valid %}
-                                    <input class="form-check-input" type="checkbox" value="" id="valid{{ session.id }}" checked>
+                                    <input class="form-check-input" type="checkbox" value="" id="valid_{{ session.id }}" checked>
                                 {% else %}
-                                    <input class="form-check-input" type="checkbox" value="" id="valid{{ session.id }}">
+                                    <input class="form-check-input" type="checkbox" value="" id="valid_{{ session.id }}">
                                 {% endif %}
                             </td>
                             <td class="font-weight-normal">
-                                <select>
-                                    <option>Select a drive</option>
+                                <select id="drive_{{ session.id }}">
+                                    <option value="0">Select a drive</option>
                                     {% for drive in db_system_drives %}
                                         {% if session.drive.drive_id == drive.drive_id %}
-                                            <option selected value="{{ drive.drive_id }}">{{ drive.name }} | {{ drive.mount }}</option>
+                                            <option selected value="{{ drive.drive_id }}">
+                                                {{ drive.name }} | {{ drive.mount }}
+                                            </option>
                                         {% else %}
-                                            <option value="{{ drive.drive_id }}">{{ drive.name }} | {{ drive.mount }}</option>
+                                            <option value="{{ drive.drive_id }}">
+                                                {{ drive.name }} | {{ drive.mount }}
+                                            </option>
                                         {% endif %}
                                     {% endfor %}
                                 </select>

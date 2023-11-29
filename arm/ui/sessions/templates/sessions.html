@@ -19,8 +19,8 @@
                                 aria-controls="session-drives-tab" aria-selected="true">Current Sessions</a>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link" id="session-edit" data-toggle="tab" href="#sessionedit" role="tab"
-                                aria-controls="session-edit-tab" aria-selected="false">Edit Sessions</a>
+                                <a class="nav-link" id="session-status" data-toggle="tab" href="#sessionstatus" role="tab"
+                                aria-controls="session-status-tab" aria-selected="false">Sessions Status</a>
                             </li>
                             <li class="nav-item" role="presentation">
                                 <a class="nav-link" id="session-help" data-toggle="tab" href="#sessionhelp" role="tab"
@@ -33,7 +33,7 @@
                             <!-- Active drives with sessions -->
                             {% include 'sessions_drives.html' %}
                             <!-- session edit tab -->
-                            {% include 'sessions_edit.html' %}
+                            {% include 'sessions_status.html' %}
                             <!-- session help tab -->
                             {% include 'sessions_help.html' %}
                         </div>
@@ -48,19 +48,61 @@
 {% block js %}
     {{ super() }}
      <script>
+         // Event listener for the Session edit scripts
          document.addEventListener('DOMContentLoaded', function () {
-          // Get the form element
-          var form = document.getElementById('sessionEdits');
+             var form = document.getElementById('sessionstatus');
+             form.addEventListener('change', function () {
+                 saveForm(event.target);
+             });
+         });
 
-          // Add change event listeners to form elements
-          form.addEventListener('change', function () {
-            saveForm();
-          });
-        });
+        // Save the form data (active and drive info) to the database
+        function saveForm(field) {
+            var formData = {};
+            formData.id = field.id;
 
-        function saveForm() {
-          // Todo: push the data to ARM API for update
-          console.log('Form data has changed. Sending data to the server...');
+            // Check if a checkbox and set true or false
+            if (field.type === 'checkbox') {
+                var checkbox = document.getElementById(field.id);
+                formData.value = checkbox.checked;
+            } else {
+                formData.value = field.value;
+            }
+
+            // Add the CSRF token to the formData
+            var csrfToken = document.getElementById('csrf_token').getAttribute('value');
+
+            console.log('Field with ID ' + field.id + ' has changed. New value: ' + formData[field.id]);
+
+            fetch('/sessions/update', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken, // Include this line
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success === true) {
+                    document.getElementById('successAlert').innerHTML = `<strong>Success:</strong> ${data.response}`;
+                    document.getElementById('successAlert').style.display = 'block';
+                    document.getElementById('errorAlert').style.display = 'none';
+                } else {
+                    document.getElementById('errorAlert').innerHTML = `<strong>Error:</strong> ${data.response}`;
+                    document.getElementById('errorAlert').style.display = 'block';
+                    document.getElementById('successAlert').style.display = 'none';
+                }
+
+                // Handle the server response as needed
+                console.log('Server response:', data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+
+                document.getElementById('successAlert').style.display = 'none';
+                document.getElementById('errorAlert').style.display = 'block';
+            });
         }
     </script>
 {% endblock %}
