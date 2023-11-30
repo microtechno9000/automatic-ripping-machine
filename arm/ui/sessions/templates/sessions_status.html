@@ -7,7 +7,12 @@
         <div class="alert alert-danger" role="alert" id="errorAlert" style="display: none;">
         </div>
 
-        <form class="container content" id="sessionEdits">
+        <div class="text-right">
+            <a href="/session/add"><img src="{{ url_for('static', filename='img/plus-circle.svg') }}" alt="Add"></a>
+            Add a new Session
+        </div>
+
+        <form class="container content">
             {{ form.hidden_tag() }}
             <div class="table-responsive m-0 p-1">
                 <table class="table table-hover table-sm ">
@@ -50,7 +55,7 @@
                                     </select>
                                 </td>
                                 <td class="text-left font-weight-normal d-none d-sm-block">{{ session.description }}</td>
-                                <td class="text-left font-weight-normal"><a href="/sessions/edit/{{ session.id }}">Edit</a></td>
+                                <td class="text-left font-weight-normal"><a href="/session/edit/{{ session.id }}">Edit</a></td>
                             </tr>
                         {% endfor %}
                     </tbody>

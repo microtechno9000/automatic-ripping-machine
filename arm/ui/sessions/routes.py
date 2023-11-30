@@ -7,7 +7,7 @@ Covers
 """
 
 from flask_login import login_required
-from flask import render_template, request
+from flask import render_template, request, redirect
 
 from arm.ui import app, db
 from arm.ui.sessions import route_sessions
@@ -16,7 +16,7 @@ from arm.models.session_settings import SessionSettings
 from arm.models.session_types import SessionTypes
 from arm.models.system_drives import SystemDrives
 from .forms import SessionStatusForm
-
+from .forms import SessionEditForm
 
 """
 Pages
@@ -154,18 +154,68 @@ def sessions():
                            form=form)
 
 
-@route_sessions.route('/session/edit/<session_id>')
+@route_sessions.route('/session/edit/<session_id>', methods=['GET', 'POST'])
 @login_required
 def session_edit(session_id):
     """
     Page - Sessions
-    Method - GET
+    Method - GET, POST
     Overview - Session editor
     """
-    db_session = Sessions.query.where(id=session_id).first()
+    db_session = Sessions.query.filter_by(id=session_id).first()
+    session_types = SessionTypes.query.all()
 
-    return render_template('sessions_status.html',
-                           db_session=db_session)
+    # load data into the form
+    form = SessionEditForm(request.values, obj=db_session)
+    form.session_type.choices = [(record_type.id, record_type.name) for record_type in session_types]
+
+    if form.validate_on_submit():
+        app.logger.debug(f"Updating: [{form.name.data}] [{form.description.data}] [{form.session_type.data}]")
+        db_session.name = form.name.data
+        db_session.description = form.description.data
+        db_session.type_id = form.session_type.data
+        db.session.commit()
+        return redirect('/session')
+    else:
+        app.logger.debug(f"Setting default to: {db_session.type_id}")
+        form.session_type.data = db_session.type_id
+        app.logger.debug(form.session_type.default)
+
+    return render_template('session_edit.html',
+                           db_session=db_session, session_types=session_types,
+                           form=form)
+
+
+@route_sessions.route('/session/add', methods=['GET', 'POST'])
+@login_required
+def session_add():
+    """
+    Page - Session Add
+    Method - GET, POST
+    Overview - Add a new Session
+    """
+    session_types = SessionTypes.query.all()
+
+    # load data into the form
+    form = SessionEditForm()
+    form.session_type.choices = [(record_type.id, record_type.name) for record_type in session_types]
+
+    if form.validate_on_submit():
+        new_session = Sessions()
+        app.logger.debug(f"Adding: [{form.name.data}] [{form.description.data}] [{form.session_type.data}]")
+        new_session.name = form.name.data
+        new_session.description = form.description.data
+        new_session.type_id = form.session_type.data
+        new_session.valid = False
+        new_session.drive_id = None
+        new_session.settings_id = form.session_type.data
+        db.session.add(new_session)
+        db.session.commit()
+        return redirect('/session')
+    else:
+        return render_template('session_edit.html',
+                               session_types=session_types,
+                               form=form)
 
 
 @route_sessions.route('/session/update', methods=['POST'])
