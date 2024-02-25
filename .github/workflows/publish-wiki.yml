@@ -19,4 +19,3 @@ jobs:
           strategy: clone
           repository: https://github.com/microtechno9000/automatic-ripping-machine.wiki.git
           dry-run: true   # true for testing, remove before PR
-          preprocess: false
