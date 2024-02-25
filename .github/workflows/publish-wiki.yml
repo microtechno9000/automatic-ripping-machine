@@ -1,0 +1,22 @@
+name: Publish wiki
+on:
+  push:
+    branches: [main]
+concurrency:
+  group: publish-wiki
+  cancel-in-progress: true
+permissions:
+  contents: write
+jobs:
+  publish-wiki:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: Andrew-Chen-Wang/github-wiki-action@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: wiki/
+          strategy: clone
+          repository: https://github.com/microtechno9000/automatic-ripping-machine.wiki.git
+          dry-run: true   # true for testing, remove before PR
+          preprocess: false
