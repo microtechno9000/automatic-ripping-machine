@@ -3,8 +3,8 @@ name: Publish ARM Wiki Update
 on:
   push:
     branches: [main]
-#    paths:
-#      - arm_wiki/**
+    paths:
+      - arm_wiki/**
   pull_request_review:
     types: [submitted]
   gollum:
