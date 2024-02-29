@@ -23,7 +23,7 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
-      - name: Sync docs to wiki
+      - name: Sync arm docs to wiki
         uses: newrelic/wiki-sync-action@main
         with:
           source: arm_wiki
