@@ -34,6 +34,7 @@ jobs:
           else
             echo "VERSION_UPDATED=true" >> $GITHUB_ENV
             echo "Version update found in commit"
+          fi
 
       - name: Determine new version
         if: env.VERSION_UPDATED == 'false'
