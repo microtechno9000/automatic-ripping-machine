@@ -27,8 +27,14 @@ jobs:
 
       - name: Check for version bump
         id: version-check
-        working-directory: .github/scripts/
-        run: ./version-check.sh
+        run: |
+          if ! git diff origin/main --name-only | grep -q 'VERSION'; then
+            echo "VERSION_UPDATED=false" >> "$GITHUB_ENV"
+            echo "No Version update found in commit"
+          else
+            echo "VERSION_UPDATED=true" >> "$GITHUB_ENV"
+            echo "Version update found in commit"
+          fi
 
       - name: Determine new version
         if: env.VERSION_UPDATED == 'false'
