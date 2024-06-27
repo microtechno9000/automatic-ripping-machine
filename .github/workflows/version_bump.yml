@@ -82,7 +82,7 @@ jobs:
           git add VERSION
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git commit -m "[Automated] Release: $VERSION_TYPE - Version from $CURRENT_VERSION to $NEW_VERSION"
+          git commit -m "[Automated] Release: ${process.env.VERSION_TYPE} - Version from $CURRENT_VERSION to $NEW_VERSION"
 
       - name: Push changes
         if: env.VERSION_UPDATED == 'false'
@@ -101,7 +101,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: prNumber,
-              body: `The version has been incremented from ${process.env.CURRENT_VERSION} to ${newVersion} based on the PR title flag. Release type: $VERSION_TYPE`
+              body: `Release type: ${process.env.VERSION_TYPE}. The version has been incremented from ${process.env.CURRENT_VERSION} to ${newVersion} based on the PR title flag.`
             })
 
       - name: Set tag for non-default branch
