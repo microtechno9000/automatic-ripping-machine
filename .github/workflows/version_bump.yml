@@ -42,7 +42,6 @@ jobs:
         id: determine-version
         run: |
           PR_TITLE=$(jq -r '.pull_request.title' "$GITHUB_EVENT_PATH")
-          echo "PR_TITLE=$PR_TITLE" >> $GITHUB_ENV 
           echo "PR Title: $PR_TITLE"
           if [[ "$PR_TITLE" == *"[FEATURE]"* ]]; then
             VERSION_TYPE="minor"
@@ -97,11 +96,12 @@ jobs:
           script: |
             const prNumber = context.issue.number;
             const newVersion = process.env.NEW_VERSION;
+            const versionType = process.env.VERSION_TYPE;
             github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: prNumber,
-              body: `Release type: ${process.env.VERSION_TYPE}. The version has been incremented from ${process.env.CURRENT_VERSION} to ${newVersion} based on the PR title flag.`
+              body: `Release type: ${versionType}. The version has been incremented from ${process.env.CURRENT_VERSION} to ${newVersion} based on the PR title flag.`
             })
 
       - name: Set tag for non-default branch
