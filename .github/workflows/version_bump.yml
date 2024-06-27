@@ -41,6 +41,7 @@ jobs:
         id: determine-version
         run: |
           PR_TITLE=$(jq -r '.pull_request.title' "$GITHUB_EVENT_PATH")
+          echo "PR Title: $PR_TITLE"
           if [[ "$PR_TITLE" == *"[FEATURE]"* ]]; then
             VERSION_TYPE="minor"
             echo "PR set to FEATURE updating minor version"
@@ -64,7 +65,12 @@ jobs:
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
           echo "CURRENT_VERSION=$CURRENT_VERSION" >> $GITHUB_ENV
           echo "New Version: " $NEW_VERSION
-
+      
+      - name: Pull latest changes from remote
+        if: env.VERSION_UPDATED == 'false'
+        run: |
+          git pull --rebase origin ${{ github.head_ref }}
+          
       - name: Update VERSION file
         if: env.VERSION_UPDATED == 'false'
         run: |
@@ -73,6 +79,10 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git commit -m "[Automated] Increment Version from $CURRENT_VERSION to $NEW_VERSION"
+
+      - name: Push changes
+        if: env.VERSION_UPDATED == 'false'
+        run: |
           git push origin HEAD:${{ github.head_ref }}
 
       - name: Comment on PR
