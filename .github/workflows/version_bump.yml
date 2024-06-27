@@ -29,7 +29,7 @@ jobs:
       - name: Check for version bump
         id: version-check
         run: |
-          if ! git diff origin/main --name-only | grep -q 'VERSION'; then
+          if ! git diff origin HEAD:${{ github.head_ref }} --name-only | grep -q 'VERSION'; then
             echo "VERSION_UPDATED=false" >> "$GITHUB_ENV"
             echo "No Version update found in commit"
           else
