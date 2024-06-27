@@ -68,6 +68,7 @@ jobs:
       - name: Update VERSION file
         if: env.VERSION_UPDATED == 'false'
         run: |
+          git pull
           echo "$NEW_VERSION" > VERSION
           git add VERSION
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
