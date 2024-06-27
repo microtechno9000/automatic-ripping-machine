@@ -42,12 +42,15 @@ jobs:
         id: determine-version
         run: |
           PR_TITLE=$(jq -r '.pull_request.title' "$GITHUB_EVENT_PATH")
+          echo "PR_TITLE=$PR_TITLE" >> $GITHUB_ENV 
           echo "PR Title: $PR_TITLE"
           if [[ "$PR_TITLE" == *"[FEATURE]"* ]]; then
             VERSION_TYPE="minor"
+            echo "VERSION_TYPE=$VERSION_TYPE" >> $GITHUB_ENV 
             echo "PR set to FEATURE updating minor version"
           elif [[ "$PR_TITLE" == *"[BUGFIX]"* ]]; then
             VERSION_TYPE="patch"
+            echo "VERSION_TYPE=$VERSION_TYPE" >> $GITHUB_ENV 
             echo "PR set to BUGFIX updating patch version"
           else
             echo "No version bump flag found in PR title. Exiting."
