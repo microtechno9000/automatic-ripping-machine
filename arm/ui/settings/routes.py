@@ -3,16 +3,17 @@ Automatic Ripping Machine - User Interface (UI) - Blueprint
     Settings
 
 Covers
-    - settings [GET]
-    - save_settings [POST]
-    - save_ui_settings [POST]
-    - save_abcde_settings [POST]
-    - save_apprise_cfg [POST]
-    - systeminfo [POST]
-    - systemdrivescan [GET]
-    - update_arm [POST]
-    - drive_eject [GET]
-    - testapprise [GET]
+- settings [GET]
+- save_settings [POST]
+- save_ui_settings [POST]
+- save_abcde_settings [POST]
+- save_apprise_cfg [POST]
+- systeminfo [POST]
+- systemdrivescan [GET]
+- update_arm [POST]
+- drive_eject [GET]
+- drive_remove [GET]
+- testapprise [GET]
 """
 import os
 import platform
@@ -62,6 +63,7 @@ def settings():
         app.logger.debug(f"Error - ARM Version file not found: {e}")
     except IOError as e:
         app.logger.debug(f"Error - ARM Version file error: {e}")
+
     failed_rips = Job.query.filter_by(status="fail").count()
     total_rips = Job.query.filter_by().count()
     movies = Job.query.filter_by(video_type="movie").count()
@@ -93,8 +95,8 @@ def settings():
     media_path = cfg.arm_config['COMPLETED_PATH']
 
     # System Drives (CD/DVD/Blueray drives)
-    # form_drive = SystemInfoDrives(request.form)
     drives = DriveUtils.drives_check_status()
+    form_drive = SystemInfoDrives(request.form)
 
     # Load up the comments.json, so we can comment the arm.yaml
     comments = utils.generate_comments()
@@ -115,7 +117,7 @@ def settings():
                            arm_path=arm_path,
                            media_path=media_path,
                            drives=drives,
-                           form_drive=False)
+                           form_drive=form_drive)
 
 
 def check_hw_transcode_support():
@@ -309,14 +311,18 @@ def server_info():
     if request.method == 'POST' and form_drive.validate():
         # Return for POST
         app.logger.debug(
-            "Drive id: " + str(form_drive.id.data) +
-            " Updated db description: " + form_drive.description.data)
+            f"Drive id: {str(form_drive.id.data)} " +
+            f"Updated name: [{str(form_drive.name.data)}] " +
+            f"Updated description: [{str(form_drive.description.data)}]")
         drive = SystemDrives.query.filter_by(drive_id=form_drive.id.data).first()
+        drive.name = str(form_drive.name.data).strip()
         drive.description = str(form_drive.description.data).strip()
         db.session.commit()
+        flash(f"Updated Drive { drive.mount } details", "success")
         # Return to systeminfo page (refresh page)
         return redirect(redirect_settings)
     else:
+        flash("Error: Unable to update drive details", "error")
         # Return for GET
         return redirect(redirect_settings)
 
@@ -335,26 +341,44 @@ def system_drive_scan():
     return redirect(redirect_settings)
 
 
-@route_settings.route('/update_arm', methods=['POST'])
+@route_settings.route('/drive/eject/<eject_id>')
 @login_required
-def update_git():
+def drive_eject(eject_id):
     """
-    Update arm via git command line
-    """
-    return utils.git_get_updates()
-
-
-@route_settings.route('/driveeject/<id>')
-@login_required
-def drive_eject(id):
-    """
-    Server System  - change state of CD/DVD/BluRay drive - toggle eject
+    Server System - change state of CD/DVD/BluRay drive - toggle eject
     """
     global redirect_settings
-    drive = SystemDrives.query.filter_by(drive_id=id).first()
+    drive = SystemDrives.query.filter_by(drive_id=eject_id).first()
     drive.open_close()
     db.session.commit()
     return redirect(redirect_settings)
+
+
+@route_settings.route('/drive/remove/<remove_id>')
+@login_required
+def drive_remove(remove_id):
+    """
+    Server System - remove a drive from the ARM UI
+    """
+    global redirect_settings
+    try:
+        app.logger.debug(f"Removing drive {remove_id}")
+        drive = SystemDrives.query.filter_by(drive_id=remove_id).first()
+        dev_path = drive.mount
+        SystemDrives.query.filter_by(drive_id=remove_id).delete()
+        db.session.commit()
+        flash(f"Removed drive [{dev_path}] from ARM", "success")
+    except Exception as e:
+        app.logger.error(f"Drive removal encountered an error: {e}")
+        flash("Drive unable to be removed, check logs for error", "error")
+    return redirect(redirect_settings)
+
+
+@route_settings.route('/update_arm', methods=['POST'])
+@login_required
+def update_git():
+    """Update arm via git command line"""
+    return ui_utils.git_get_updates()
 
 
 @route_settings.route('/testapprise')

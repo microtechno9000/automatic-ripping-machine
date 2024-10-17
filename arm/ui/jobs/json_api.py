@@ -64,8 +64,15 @@ def get_x_jobs(job_status):
     if jobs:
         app.logger.debug("jobs  - we have " + str(len(job_results)) + " jobs")
         success = True
-    return {"success": success, "mode": job_status,
-            "results": job_results, "arm_name": cfg.arm_config['ARM_NAME']}
+
+    # Get authentication state
+    authenticated = authenticated_state()
+
+    return {"success": success,
+            "mode": job_status,
+            "results": job_results,
+            "arm_name": cfg.arm_config['ARM_NAME'],
+            "authenticated": authenticated}
 
 
 def process_logfile(logfile, job, job_results):
