@@ -2,6 +2,8 @@
 
 ## Supported Versions
 
+Supported security maintained versions
+
 | Version | Supported          |
 |---------|--------------------|
 | >=2.6   | :white_check_mark: |
