@@ -2,6 +2,8 @@
 
 ## Supported Versions
 
+test test things
+
 | Version | Supported          |
 |---------|--------------------|
 | >=2.6   | :white_check_mark: |
