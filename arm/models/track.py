@@ -50,6 +50,7 @@ class Track(ARMModel):
     status = db.Column(db.String(32))
     error = db.Column(db.Text)
     source = db.Column(db.String(32))
+    process = db.Column(db.Boolean)
 
     def __init__(self, job_id: int, track_number: str, length: int, aspect_ratio: str,
                  fps: float, main_feature: bool, source: str, basename: str, filename: str):
@@ -63,3 +64,4 @@ class Track(ARMModel):
         self.basename = basename
         self.filename = filename
         self.ripped = False
+        self.process = False

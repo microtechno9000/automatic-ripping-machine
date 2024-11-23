@@ -37,6 +37,7 @@ class SystemDrives(ARMModel):
     job_id_current = db.Column(db.Integer, db.ForeignKey("job.job_id"))
     job_id_previous = db.Column(db.Integer, db.ForeignKey("job.job_id"))
     description = db.Column(db.Unicode(200))
+    drive_mode = db.Column(db.String(100))
 
     # relationship - join current and previous jobs to the jobs table
     job_current = db.relationship("Job", backref="Current", foreign_keys=[job_id_current])
@@ -50,6 +51,8 @@ class SystemDrives(ARMModel):
         self.job_id_previous = job_previous
         self.description = description
         self.type = type
+        self.drive_type()
+        self.drive_mode = "auto"
 
     # TODO: this is a flask dataclass and should not contain functions, remove to a new class or function file
     # def drive_type(self):

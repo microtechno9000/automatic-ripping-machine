@@ -108,6 +108,8 @@ class Job(ARMModel):
     pid = db.Column(db.Integer)
     pid_hash = db.Column(db.Integer)
     is_iso = db.Column(db.Boolean)
+    manual_start = db.Column(db.Boolean)
+    manual_mode = db.Column(db.Boolean)
     tracks = db.relationship('Track', backref='job', lazy='dynamic')
     config = db.relationship('Config', uselist=False, backref="job")
 
@@ -119,6 +121,8 @@ class Job(ARMModel):
         self.ejected = False
         self.updated = False
         self.stage = str(round(time.time() * 100))
+        self.manual_start = False
+        self.manual_mode = False
 
         # TODO: avoid importing config, pass the value
         # if cfg.arm_config['VIDEOTYPE'] != "auto":
