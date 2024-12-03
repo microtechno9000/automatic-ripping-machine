@@ -9,7 +9,7 @@ Functions
     - SystemInfoDrives
 """
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, IntegerField
+from wtforms import StringField, SubmitField, IntegerField, SelectField
 from wtforms.validators import DataRequired
 
 
@@ -124,7 +124,9 @@ class SystemInfoDrives(FlaskForm):
 
     Fields:
         id (IntegerField): The unique identifier for the system drive. This field is required.
+        name (StringField): Name of the drive the user can edit
         description (StringField): A description or nickname for the system drive. This field is required.
+        drive_mode (SelectField): Selectable field allowing user to select Auto - default, or Manual - select tracks
         submit (SubmitField): A button to submit the form.
 
     Validators:
@@ -138,6 +140,14 @@ class SystemInfoDrives(FlaskForm):
     Note:
         Both the `id` and `description` fields must be filled out before submitting the form.
     """
-    id = IntegerField('id', validators=[DataRequired()])
-    description = StringField('description', validators=[DataRequired()])
+    id = IntegerField('Drive ID', validators=[DataRequired()])
+    name = StringField('Name', validators=[DataRequired()])
+    description = StringField('Description', validators=[DataRequired()])
+    drive_mode = SelectField('Drive Mode',
+                             validators=[DataRequired()],
+                             choices=[
+                                 ('auto', 'Auto'),
+                                 ('manual', 'Manual')
+                             ],
+                             )
     submit = SubmitField('Submit')

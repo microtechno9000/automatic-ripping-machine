@@ -20,12 +20,12 @@ from flask import render_template, request, flash, redirect, url_for
 from werkzeug.routing import ValidationError
 from flask import current_app as app
 
-from arm.ui.forms import TitleSearchForm, ChangeParamsForm, TrackFormDynamic
+import ui.ui_utils as ui_utils
 from ui.jobs import route_jobs
 from ui.jobs import utils, json_api
 from ui import db, constants
 import config.config as cfg
-from ui.jobs.forms import TitleSearchForm, ChangeParamsForm
+from ui.jobs.forms import TitleSearchForm, ChangeParamsForm, TrackFormDynamic
 from models.job import Job
 from models.notifications import Notifications
 
@@ -53,7 +53,7 @@ def jobdetail():
 
     # Get Job and Track data
     tracks = job.tracks.all()
-    search_results = utils.metadata_selector("get_details", job.title, job.year, job.imdb_id)
+    # search_results = utils.metadata_selector("get_details", job.title, job.year, job.imdb_id)
     track_form.track_ref.min_entries = len(tracks)
     app.logger.debug(f"Found [{len(tracks)}] tracks")
     track_form.track_ref.entries.clear()
@@ -66,7 +66,7 @@ def jobdetail():
         for entry in track_form.track_ref.entries:
             entry.checkbox.render_kw = {'disabled': 'disabled'}
 
-    search_results = ui_utils.metadata_selector("get_details", job.title, job.year, job.imdb_id)
+    search_results = utils.metadata_selector("get_details", job.title, job.year, job.imdb_id)
 
     if search_results and 'Error' not in search_results:
         job.plot = search_results['Plot'] if 'Plot' in search_results else "There was a problem getting the plot"
@@ -204,7 +204,7 @@ def updatetitle():
     app.logger.debug(f"Old Title and Year: {old_title}, {old_year}")
 
     app.logger.debug(f"New Title: {request.args.get('title')}")
-    new_title = ui_utils.clean_for_filename(request.args.get('title'))
+    new_title = utils.clean_for_filename(request.args.get('title'))
     app.logger.debug(f"Cleaned New Title: {new_title}")
     job.title = job.title_manual = new_title
 
@@ -320,9 +320,9 @@ def feed_json():
             'search': {'funct': json_api.search, 'args': ('searchq',)},
             'getfailed': {'funct': json_api.get_x_jobs, 'args': ('fail',)},
             'getsuccessful': {'funct': json_api.get_x_jobs, 'args': ('success',)},
-            'fixperms': {'funct': ui_utils.fix_permissions, 'args': ('j_id',)},
+            'fixperms': {'funct': utils.fix_permissions, 'args': ('j_id',)},
             'joblist': {'funct': json_api.get_x_jobs, 'args': ('joblist',)},
-            'send_item': {'funct': ui_utils.send_to_remote_db, 'args': ('j_id',)},
+            'send_item': {'funct': utils.send_to_remote_db, 'args': ('j_id',)},
             'change_job_params': {'funct': json_api.change_job_params, 'args': ('config_id',)},
             'read_notification': {'funct': json_api.read_notification, 'args': ('notify_id',)},
             'notify_timeout': {'funct': json_api.get_notify_timeout, 'args': ('notify_timeout',)}

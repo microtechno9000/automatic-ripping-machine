@@ -1,3 +1,5 @@
+import sqlalchemy
+
 from models.arm_models import ARMModel
 from ui.ui_setup import db
 
@@ -22,6 +24,7 @@ class SystemDrives(ARMModel):
         job_id_current (int): The ID of the current job associated with the drive.
         job_id_previous (int): The ID of the previous job associated with the drive.
         description (str): Description of the drive.
+        drive_mode (str): Drive mode, Default Auto, Manual when user selecting tracks
 
     Relationships:
         job_current (relationship): Relationship to the current job associated with the drive.
@@ -47,11 +50,19 @@ class SystemDrives(ARMModel):
         self.name = name
         self.mount = mount
         self.open = False
-        self.job_id_current = job
-        self.job_id_previous = job_previous
+        # Check if Job is 0, if so, set to NULL
+        if job != 0:
+            self.job_id_current = job
+        else:
+            self.job_id_current = sqlalchemy.null()
+        # Check if the Previous Job is 0, if so, set to NULL
+        if job_previous != 0:
+            self.job_id_previous = job_previous
+        else:
+            self.job_id_previous = sqlalchemy.null()
+
         self.description = description
         self.type = type
-        self.drive_type()
         self.drive_mode = "auto"
 
     # TODO: this is a flask dataclass and should not contain functions, remove to a new class or function file

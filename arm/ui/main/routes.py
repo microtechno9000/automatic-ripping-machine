@@ -12,6 +12,7 @@ from flask import render_template, session, redirect
 from flask_login import login_required
 
 import config.config as cfg
+import ui.ui_utils as ui_utils
 from ui import db
 from ui.main.forms import SystemInfoLoad
 from ui.settings.ServerUtil import ServerUtil
@@ -52,9 +53,15 @@ def home():
     session["arm_name"] = cfg.arm_config['ARM_NAME']
     session["page_title"] = "Home"
 
+    # TODO fix this back to something that works, pending ripper working
     jobs = {}
 
+    # Set authentication state for index
+    authenticated = ui_utils.authenticated_state()
+    app.logger.debug(f'Authentication state: {authenticated}')
+
     response = flask.make_response(render_template("index.html",
+                                                   authenticated=authenticated,
                                                    jobs=jobs,
                                                    children=cfg.arm_config['ARM_CHILDREN'],
                                                    server=server,

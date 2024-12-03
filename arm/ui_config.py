@@ -162,8 +162,10 @@ class UIConfig:
     LOG_FILENAME: str = 'arm.log'
 
     # Define Flask system state
-    FLASK_DEBUG: bool = True
-    WERKZEUG_DEBUG: bool = True
+    FLASK_ENV = "production"
+    FLASK_DEBUG = False
+    DEBUG = False
+    WERKZEUG_DEBUG: bool = False
     ENV: str = 'default'
     LOGIN_DISABLED: bool = cfg.arm_config['DISABLE_LOGIN']
     TESTING: bool = False
@@ -208,7 +210,9 @@ class Development(UIConfig):
     """
     ARM Flask Development config
     """
-    FLASK_DEBUG: bool = True
+    FLASK_ENV = "development"
+    FLASK_DEBUG = True
+    DEBUG = True
     WERKZEUG_DEBUG: bool = True
     ENV: str = 'development'
     LOGIN_DISABLED: bool = True
@@ -218,7 +222,9 @@ class Testing(UIConfig):
     """
     ARM Flask Development config
     """
-    FLASK_DEBUG: bool = True
+    FLASK_ENV = "development"
+    FLASK_DEBUG = True
+    DEBUG = True
     WERKZEUG_DEBUG: bool = True
     ENV: str = 'testing'
     LOGIN_DISABLED: bool = True

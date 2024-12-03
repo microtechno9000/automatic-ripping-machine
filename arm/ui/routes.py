@@ -20,7 +20,7 @@ from flask.logging import default_handler  # noqa: F401
 from flask_login import LoginManager, login_required, \
     current_user, login_user, logout_user  # noqa: F401
 
-import arm.ui.utils as ui_utils
+import arm.ui.ui_utils as ui_utils
 from arm.ui import app, db, constants
 from arm.models.job import Job
 from arm.models.system_info import SystemInfo

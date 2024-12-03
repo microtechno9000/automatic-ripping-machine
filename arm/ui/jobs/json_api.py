@@ -14,6 +14,7 @@ from flask import current_app as app
 
 import config.config as cfg
 from ui import db
+import ui.ui_utils as ui_utils
 from ui.jobs.forms import ChangeParamsForm
 from ui.jobs.utils import job_id_validator
 from ui.settings import DriveUtils
@@ -66,7 +67,7 @@ def get_x_jobs(job_status):
         success = True
 
     # Get authentication state
-    authenticated = authenticated_state()
+    authenticated = ui_utils.authenticated_state()
 
     return {"success": success,
             "mode": job_status,
@@ -200,7 +201,7 @@ def process_audio_logfile(logfile, job, job_results):
 
 def calc_process_time(starttime, cur_iter, max_iter):
     """Modified from stackoverflow
-    Get a rough estimate of ETA, return formatted String"""
+    Get an estimate of ETA, return formatted String"""
     try:
         time_elapsed = datetime.datetime.now() - starttime
         time_estimated = (time_elapsed.seconds / int(cur_iter)) * int(max_iter)

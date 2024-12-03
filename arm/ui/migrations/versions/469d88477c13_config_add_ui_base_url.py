@@ -18,7 +18,9 @@ depends_on = None
 
 def upgrade():
     op.add_column('config',
-                  sa.Column('UI_BASE_URL', sa.String(length=128), nullable=True)
+                  sa.Column('UI_BASE_URL',
+                            sa.String(length=128),
+                            nullable=True)
                   )
 
 

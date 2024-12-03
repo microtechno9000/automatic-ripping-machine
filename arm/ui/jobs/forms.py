@@ -7,7 +7,8 @@ Forms
     - ChangeParamsForm
 """
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, SelectField, BooleanField, IntegerField
+from wtforms import StringField, SubmitField, SelectField, BooleanField, IntegerField, FieldList, \
+    HiddenField, BooleanField, Form, FormField
 from wtforms.validators import DataRequired
 
 
@@ -71,3 +72,41 @@ class ChangeParamsForm(FlaskForm):
     MINLENGTH = IntegerField('Minimum Length: ')
     MAXLENGTH = IntegerField('Maximum Length: ')
     submit = SubmitField('Submit')
+
+
+class TrackForm(Form):
+    """
+    Represents an individual track with an ID and a checkbox status.
+
+    Fields:
+        track_ref (HiddenField): Stores the track's unique identifier, hidden in the form.
+        checkbox (BooleanField): Represents a checkbox to mark the track as selected or unselected.
+
+    Validators:
+        None
+
+    Usage:
+        - /jobdetail
+    """
+    track_ref = HiddenField('ID')
+    checkbox = BooleanField('Checkbox')
+
+
+class TrackFormDynamic(FlaskForm):
+    """
+    A dynamic form for managing a list of tracks in a job.
+
+    This form is used to dynamically generate fields for each track associated
+    with a job. Each track is represented by a `TrackForm` with a unique ID and
+    a checkbox for user interaction.
+
+    Attributes:
+        track_ref (FieldList): A dynamic list of `TrackForm` instances, one for each track.
+            - Each entry contains a hidden `track_ref` field for the ID and a `checkbox` field
+              for selection.
+        min_entries (int): Ensures at least one entry is present in the `FieldList`.
+
+    Usage:
+        -`/jobdetail`
+    """
+    track_ref = FieldList(FormField(TrackForm), min_entries=1)

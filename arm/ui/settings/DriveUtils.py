@@ -14,6 +14,7 @@ import pyudev
 import re
 import logging
 from flask import current_app as app
+from sqlalchemy import desc
 
 from ui import db
 from models.job import Job
@@ -48,6 +49,8 @@ def drives_update():
     """
     scan the system for new cd/dvd/Blu-ray drives
     """
+    app.logger.debug("Scanning for new drives")
+
     udev_drives = drives_search()
     new_count = 0
 

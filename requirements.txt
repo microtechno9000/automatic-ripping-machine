@@ -1,6 +1,6 @@
 #-r arm-dependencies/requirements.txt
 
-# For ARM v3.0 development
+# ARM v3.0 development
 # ARM UI dependancies added here to help later seperation of UI and Ripper
 
 # Flask Dependancies
@@ -25,14 +25,17 @@ Flask-WTF==1.2.1
 netifaces==0.11.0
 python-dotenv==1.0.1
 sqlalchemy==2.0.25
-waitress==2.1.2
+waitress==3.0.1
+
+# Additional Python packages
+mysql-connector-python      # Required for Flask to use the mysql connector
 
 # Required for developers conducting testing
 pytest==8.1.1
 WTForms~=3.0.1
 pyudev~=0.24.1
 psutil~=5.9.5
-requests~=2.31.0
+requests~=2.32.0
 PyYAML~=6.0.1
 apprise~=1.4.5
 pydvdid~=1.1
