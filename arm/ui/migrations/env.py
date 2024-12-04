@@ -11,8 +11,11 @@ config = context.config
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
-fileConfig(config.config_file_name)
-logger = logging.getLogger('alembic.env')
+# DO NOT ENABLE THE BELOW LOGGING
+# Enabling logging from within Alembig breaks ARM logging in the UI
+# fileConfig(config.config_file_name,
+#            disable_existing_loggers=False)
+# logger = logging.getLogger('alembic.env')
 
 
 def get_engine():

@@ -53,28 +53,24 @@ def create_app(config_name=os.getenv("FLASK_ENV", "production")):
         app.logger.info('ARM UI Running within Docker, ignoring any config in arm.yml')
     app.logger.info(f'Starting ARM UI on interface address - {app.config["SERVER_HOST"]}:{app.config["SERVER_PORT"]}')
 
-    # # Pause ARM to ensure ARM DB is up and running
-    # if config_class.DOCKER and config_class.ENV != 'development':
-    #     app.logger.info("Sleeping for 60 seconds to ensure ARM DB is active")
-    #     sleep(55)
-    #     for i in range(5, 0, -1):
-    #         app.logger.info(f"Starting in ... {i}")
-    #         sleep(1)
-    #     app.logger.info("Starting ARM")
+    # Pause ARM to ensure ARM DB is up and running
+    if config_class.DOCKER and config_class.ENV != 'development':
+        app.logger.info("Sleeping for 60 seconds to ensure ARM DB is active")
+        sleep(55)
+        for i in range(5, 0, -1):
+            app.logger.info(f"Starting in ... {i}")
+            sleep(1)
+        app.logger.info("Starting ARM")
 
     # Initialise connection to databases
     db.init_app(app)  # Initialise database
     app.logger.debug(f'Alembic Migration Folder: {config_class.alembic_migrations_dir}')
     migrate.init_app(app, db, directory=config_class.alembic_migrations_dir)
 
-    # Save current logging state
-    # Required due to a conflict with the alembic upgrade wiping flask log config
-    # saved_log_config = logging.root.manager.loggerDict.copy()
-
     with app.app_context():
         # # Upgrade or load the ARM database to the latest head/version
-        # upgrade(directory=config_class.alembic_migrations_dir,
-        #         revision='head')
+        upgrade(directory=config_class.alembic_migrations_dir,
+                revision='head')
 
         # Initialise the Flask-Login manager
         login_manager.init_app(app)
@@ -91,9 +87,6 @@ def create_app(config_name=os.getenv("FLASK_ENV", "production")):
         # Initialise ARM and ensure tables are set, when not in Test
         if not config_class.TESTING:
             initialise_arm(app, db)
-
-    # Restore the original log configuration, after flask alembic breaking it
-    # logging.root.manager.loggerDict = saved_log_config
 
     # Remove GET/page loads from logging
     logging.getLogger('werkzeug').setLevel(logging.ERROR)

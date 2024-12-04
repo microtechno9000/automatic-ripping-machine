@@ -62,8 +62,7 @@ def home():
     jobs = {}
 
     # Set authentication state for index
-    # authenticated = ui_utils.authenticated_state()
-    authenticated = True
+    authenticated = ui_utils.authenticated_state()
     current_app.logger.debug(f'Authentication state: {authenticated}')
 
     response = flask.make_response(render_template("index.html",
