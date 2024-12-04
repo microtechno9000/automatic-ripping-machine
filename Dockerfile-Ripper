@@ -1,0 +1,218 @@
+###########################################################
+#           ARM 3.0 Development Docker Build              #
+###########################################################
+# # This dockerfile builds the ARM Ripper container
+# used to rip and transcode music, movies and tv series
+###########################################################
+
+###########################################################
+# arm-dependencies
+###########################################################
+
+###########################################################
+# Ripper - Dependencies - Part 1 - Update base image
+###########################################################
+# base image, used for build stages and final images
+FROM phusion/baseimage:jammy-1.0.4 AS ripper-deps
+RUN mkdir /opt/arm
+WORKDIR /opt/arm
+
+# start by updating and upgrading the OS
+RUN \
+    apt clean && \
+    apt update && \
+    apt upgrade -y -o Dpkg::Options::="--force-confold"
+
+###########################################################
+# UI - Dependencies - Part 2 - Dependancies and config
+###########################################################
+# create an arm group(gid 1000) and an arm user(uid 1000), with password logon disabled
+RUN groupadd -g 1000 arm \
+    && useradd -rm -d /home/arm -s /bin/bash -g arm -G video,cdrom -u 1000 arm
+
+# set the default environment variables
+# UID and GID are not settable as of https://github.com/phusion/baseimage-docker/pull/86, as doing so would
+# break multi-account containers
+ENV ARM_UID=1000
+ENV ARM_GID=1000
+
+RUN install_clean \
+        git \
+        build-essential \
+        libcurl4-openssl-dev \
+        libssl-dev \
+        libudev-dev \
+        libzbar-dev \
+        libzbar0 \
+        gnupg \
+        nano \
+        python3 \
+        python3-dev \
+        python3-pip \
+        scons \
+        swig \
+        udev \
+        wget \
+        vim \
+        gosu
+
+# install python reqs
+RUN pip3 install mysql-connector-python
+COPY requirements.txt ./requirements.txt
+RUN pip3 install --upgrade pip wheel setuptools psutil pyudev
+RUN pip3 install --ignore-installed --prefer-binary -r ./requirements.txt
+
+# install deps for ripper
+RUN install_clean \
+        abcde \
+        eyed3 \
+        atomicparsley \
+        cdparanoia \
+        eject \
+        ffmpeg \
+        flac \
+        glyrc \
+        default-jre-headless \
+        id3 \
+        id3v2 \
+        lame \
+        libavcodec-extra \
+        lsdvd
+
+# install libdvd-pkg
+RUN \
+    install_clean libdvd-pkg && \
+    dpkg-reconfigure libdvd-pkg
+
+# install makemkv
+###########################################################
+# TODO: fix before rolling into prod
+###########################################################
+#COPY ./scripts/install_mkv_hb_deps.sh /install_mkv_hb_deps.sh
+COPY ./temp_install_mkv_hb_deps.sh /install_mkv_hb_deps.sh
+RUN chmod +x /install_mkv_hb_deps.sh && sleep 1 && \
+    /install_mkv_hb_deps.sh
+
+# Install handbrake
+###########################################################
+# TODO: fix before rolling into prod
+###########################################################
+#COPY ./scripts/install_handbrake.sh /install_handbrake.sh
+COPY ./temp_install_handbrake.sh /install_handbrake.sh
+RUN chmod +x /install_handbrake.sh && sleep 1 && \
+    /install_handbrake.sh
+
+## MakeMKV setup by https://github.com/tianon
+###########################################################
+# TODO: fix before rolling into prod
+###########################################################
+#COPY ./scripts/install_makemkv.sh /install_makemkv.sh
+COPY ./temp_install_makemkv.sh /install_makemkv.sh
+RUN chmod +x /install_makemkv.sh && sleep 1 && \
+    /install_makemkv.sh
+
+# clean up apt
+RUN apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Container healthcheck
+###########################################################
+# TODO: fix before rolling into prod
+###########################################################
+#COPY scripts/healthcheck.sh /healthcheck.sh
+COPY temp_healthcheck.sh /healthcheck.sh
+RUN chmod +x /healthcheck.sh
+HEALTHCHECK --interval=5m --timeout=15s --start-period=30s CMD /healthcheck.sh
+
+# Remove SSH
+RUN rm -rf /etc/service/sshd /etc/my_init.d/00_regen_ssh_host_keys.sh
+
+#ARG VERSION
+#ARG BUILD_DATE
+## set metadata
+LABEL org.opencontainers.image.source=https://github.com/automatic-ripping-machine/arm-dependencies.git
+LABEL org.opencontainers.image.url=https://github.com/automatic-ripping-machine/arm-dependencies
+LABEL org.opencontainers.image.description="Dependencies for Automatic Ripping Machine"
+LABEL org.opencontainers.image.documentation=https://raw.githubusercontent.com/automatic-ripping-machine/arm-dependencies/main/README.md
+LABEL org.opencontainers.image.license=MIT
+#LABEL org.opencontainers.image.version=$VERSION
+#LABEL org.opencontainers.image.created=$BUILD_DATE
+
+###########################################################
+# ARM Ripper Builder
+###########################################################
+
+###########################################################
+# Ripper - Build - Part 1 - Build ARM Ripper
+###########################################################
+#FROM automaticrippingmachine/arm-dependencies:1.1.8 AS base
+FROM ripper-deps as build
+
+LABEL org.opencontainers.image.source=https://github.com/automatic-ripping-machine/automatic-ripping-machine
+LABEL org.opencontainers.image.license=MIT
+LABEL org.opencontainers.image.description='Automatic Ripping Machine Ripper Container'
+LABEL org.opencontainers.image.version="3.0_dev"
+
+## Setup folders and fstab
+RUN \
+    mkdir -m 0777 -p /home/arm /home/arm/config \
+    /mnt/dev/sr0 \
+    /mnt/dev/sr1 /mnt/dev/sr2 /mnt/dev/sr3 /mnt/dev/sr4 \
+    /mnt/dev/sr5 /mnt/dev/sr6 /mnt/dev/sr7 /mnt/dev/sr8 \
+    /mnt/dev/sr9 /mnt/dev/sr10 /mnt/dev/sr11 /mnt/dev/sr12 \
+    /mnt/dev/sr13 /mnt/dev/sr14 /mnt/dev/sr15 /mnt/dev/sr16 \
+    /mnt/dev/sr17 /mnt/dev/sr18 /mnt/dev/sr19 /mnt/dev/sr20 \
+    && \
+    echo "/dev/sr0  /mnt/dev/sr0  udf,iso9660  users,noauto,exec,utf8,ro  0  0" >> /etc/fstab && \
+    echo "/dev/sr1  /mnt/dev/sr1  udf,iso9660  users,noauto,exec,utf8,ro  0  0" >> /etc/fstab && \
+    echo "/dev/sr2  /mnt/dev/sr2  udf,iso9660  users,noauto,exec,utf8,ro  0  0" >> /etc/fstab && \
+    echo "/dev/sr3  /mnt/dev/sr3  udf,iso9660  users,noauto,exec,utf8,ro  0  0" >> /etc/fstab && \
+    echo "/dev/sr4  /mnt/dev/sr4  udf,iso9660  users,noauto,exec,utf8,ro  0  0" >> /etc/fstab && \
+    echo "/dev/sr5  /mnt/dev/sr5  udf,iso9660  users,noauto,exec,utf8,ro  0  0" >> /etc/fstab && \
+    echo "/dev/sr6  /mnt/dev/sr6  udf,iso9660  users,noauto,exec,utf8,ro  0  0" >> /etc/fstab && \
+    echo "/dev/sr7  /mnt/dev/sr7  udf,iso9660  users,noauto,exec,utf8,ro  0  0" >> /etc/fstab && \
+    echo "/dev/sr8  /mnt/dev/sr8  udf,iso9660  users,noauto,exec,utf8,ro  0  0" >> /etc/fstab && \
+    echo "/dev/sr9  /mnt/dev/sr9  udf,iso9660  users,noauto,exec,utf8,ro  0  0" >> /etc/fstab && \
+    echo "/dev/sr10  /mnt/dev/sr10  udf,iso9660  users,noauto,exec,utf8,ro  0  0" >> /etc/fstab && \
+    echo "/dev/sr11  /mnt/dev/sr11  udf,iso9660  users,noauto,exec,utf8,ro  0  0" >> /etc/fstab && \
+    echo "/dev/sr12  /mnt/dev/sr12  udf,iso9660  users,noauto,exec,utf8,ro  0  0" >> /etc/fstab && \
+    echo "/dev/sr13  /mnt/dev/sr13  udf,iso9660  users,noauto,exec,utf8,ro  0  0" >> /etc/fstab && \
+    echo "/dev/sr14  /mnt/dev/sr14  udf,iso9660  users,noauto,exec,utf8,ro  0  0" >> /etc/fstab && \
+    echo "/dev/sr15  /mnt/dev/sr15  udf,iso9660  users,noauto,exec,utf8,ro  0  0" >> /etc/fstab && \
+    echo "/dev/sr16  /mnt/dev/sr16  udf,iso9660  users,noauto,exec,utf8,ro  0  0" >> /etc/fstab && \
+    echo "/dev/sr17  /mnt/dev/sr17  udf,iso9660  users,noauto,exec,utf8,ro  0  0" >> /etc/fstab && \
+    echo "/dev/sr18  /mnt/dev/sr18  udf,iso9660  users,noauto,exec,utf8,ro  0  0" >> /etc/fstab && \
+    echo "/dev/sr19  /mnt/dev/sr19  udf,iso9660  users,noauto,exec,utf8,ro  0  0" >> /etc/fstab && \
+    echo "/dev/sr20  /mnt/dev/sr20  udf,iso9660  users,noauto,exec,utf8,ro  0  0" >> /etc/fstab
+
+# Add ARM UI service
+RUN mkdir /etc/service/armui
+COPY ./scripts/docker/runsv/armui.sh /etc/service/armui/run
+RUN chmod +x /etc/service/armui/run
+
+# Create our startup scripts
+RUN mkdir -p /etc/my_init.d
+COPY ./scripts/docker/runit/arm_user_files_setup_ui.sh /etc/my_init.d/arm_user_files_setup_ui.sh
+COPY ./scripts/docker/runit/start_udev.sh /etc/my_init.d/start_udev.sh
+RUN chmod +x /etc/my_init.d/*.sh
+
+# We need to use a modified udev
+COPY ./scripts/docker/custom_udev /etc/init.d/udev
+RUN chmod +x /etc/my_init.d/*.sh
+
+# Copy over source code for ARM UI
+COPY . /opt/arm/
+
+# Our docker udev rule
+RUN ln -sv /opt/arm/setup/51-docker-arm.rules /lib/udev/rules.d/
+
+# Allow git to be managed from the /opt/arm folders
+RUN git config --global --add safe.directory /opt/arm
+
+CMD ["/sbin/my_init"]
+WORKDIR /home/arm
+
+###########################################################
+# UI - Build - Part 2 - Deploy
+###########################################################
+FROM build AS arm-ripper
+LABEL org.opencontainers.image.version="3.0.0_dev"
