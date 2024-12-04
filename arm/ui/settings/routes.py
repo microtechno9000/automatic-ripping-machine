@@ -24,6 +24,7 @@ from flask_login import login_required
 from flask import render_template, request, flash, redirect, session
 from flask import current_app as app
 from datetime import datetime
+import logging
 
 from ui.settings import route_settings
 from ui.settings import utils
@@ -38,10 +39,28 @@ from ui.settings.forms import SettingsForm, UiSettingsForm, AbcdeForm, SystemInf
 from ui.settings.ServerUtil import ServerUtil
 from ui.notifications.utils import notify
 
-
 # Page definitions
 page_settings = "settings.html"
 redirect_settings = "/settings"
+
+
+@route_settings.route('/debug_logging')
+def debug_logging():
+    # Check Flask logger handlers
+    flask_logger = app.logger
+    custom_logger = logging.getLogger(__name__)
+
+    def log_debug_info(logger, name):
+        handler_info = [
+            f"{type(h).__name__} -> {getattr(h, 'baseFilename', 'No File')}"
+            for h in logger.handlers
+        ]
+        return f"{name} | Handlers: {handler_info}"
+
+    return f"""
+    Flask Logger: {log_debug_info(flask_logger, 'Flask Logger')}<br>
+    Custom Logger: {log_debug_info(custom_logger, 'Custom Logger')}
+    """
 
 
 @route_settings.route('/settings')
@@ -54,6 +73,10 @@ def settings():
     needing to open a text editor
     """
     global page_settings
+
+    app.logger.info("Test info")
+    app.logger.debug("Test debug")
+    app.logger.warning("Test warning")
 
     # stats for info page
     version = "Unknown"
@@ -424,7 +447,7 @@ def drive_manual(manual_id):
 @login_required
 def update_git():
     """Update arm via git command line"""
-    return ui_utils.git_get_updates()
+    return utils.git_get_updates()
 
 
 @route_settings.route('/testapprise')

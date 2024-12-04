@@ -18,19 +18,19 @@ from models.notifications import Notifications
 from ui import db
 
 
-@app.context_processor
-def arm_nav_notify():
-    """
-    inject the unread notification count to all pages for the navbar count
-    """
-    try:
-        notify_count = Notifications.query.filter_by(cleared='0').count()
-        app.logger.debug(notify_count)
-
-    except Exception:
-        notify_count = None
-
-    return dict(notify_count=notify_count)
+# @app.context_processor
+# def arm_nav_notify():
+#     """
+#     inject the unread notification count to all pages for the navbar count
+#     """
+#     try:
+#         notify_count = Notifications.query.filter_by(cleared='0').count()
+#         app.logger.debug(notify_count)
+#
+#     except Exception:
+#         notify_count = None
+#
+#     return dict(notify_count=notify_count)
 
 
 @route_notifications.route('/notificationview')

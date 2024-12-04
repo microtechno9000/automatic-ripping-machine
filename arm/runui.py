@@ -11,4 +11,7 @@ if __name__ == '__main__':
     app = create_app()
 
     # Serve ARM using Waitress
-    serve(app, host=app.config["SERVER_HOST"], port=app.config["SERVER_PORT"], threads=40)
+    serve(app,
+          host=app.config["SERVER_HOST"],
+          port=app.config["SERVER_PORT"],
+          threads=40)

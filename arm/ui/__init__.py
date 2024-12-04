@@ -5,7 +5,6 @@ Automatic Ripping Machine - User Interface (UI)
 import os
 from time import sleep
 from flask import Flask
-from flask.logging import default_handler
 from flask_cors import CORS
 from flask_migrate import upgrade
 import logging
@@ -25,16 +24,23 @@ def create_app(config_name=os.getenv("FLASK_ENV", "production")):
     config_class = config_classes.get(config_name.lower())
 
     # Setup logging
-    dictConfig(setuplog())
+    # TODO: change these to a database config for user config
+    log_filename: str = "/home/arm/logs/arm_ui.log"
+    log_size = 5
+    log_count = 2
+    dictConfig(setuplog(log_filename, log_size, log_count))
 
     app = Flask(__name__)
-    # Set log level per arm.yml config
-    app.logger.info(f"Setting log level to: {config_class.LOGLEVEL}")
-    app.logger.setLevel(config_class.LOGLEVEL)
 
+    # Flask application configuration
     app.config.from_object(config_class)
     csrf.init_app(app)
     CORS(app, resources={r"/*": {"origins": "*", "send_wildcard": "False"}})
+
+    # Set log level per arm.yml config
+    app.logger.debug(f"Starting Flask app: {__name__}")
+    app.logger.info(f"Setting log level to: {config_class.LOGLEVEL}")
+    app.logger.setLevel(config_class.LOGLEVEL)
 
     # Report system state for debugging
     app.logger.debug(f'Starting ARM in [{config_class.ENV}] mode')
@@ -47,24 +53,28 @@ def create_app(config_name=os.getenv("FLASK_ENV", "production")):
         app.logger.info('ARM UI Running within Docker, ignoring any config in arm.yml')
     app.logger.info(f'Starting ARM UI on interface address - {app.config["SERVER_HOST"]}:{app.config["SERVER_PORT"]}')
 
-    # Pause ARM to ensure ARM DB is up and running
-    if config_class.DOCKER and config_class.ENV != 'development':
-        app.logger.info("Sleeping for 60 seconds to ensure ARM DB is active")
-        sleep(55)
-        for i in range(5, 0, -1):
-            app.logger.info(f"Starting in ... {i}")
-            sleep(1)
-        app.logger.info("Starting ARM")
+    # # Pause ARM to ensure ARM DB is up and running
+    # if config_class.DOCKER and config_class.ENV != 'development':
+    #     app.logger.info("Sleeping for 60 seconds to ensure ARM DB is active")
+    #     sleep(55)
+    #     for i in range(5, 0, -1):
+    #         app.logger.info(f"Starting in ... {i}")
+    #         sleep(1)
+    #     app.logger.info("Starting ARM")
 
     # Initialise connection to databases
     db.init_app(app)  # Initialise database
     app.logger.debug(f'Alembic Migration Folder: {config_class.alembic_migrations_dir}')
     migrate.init_app(app, db, directory=config_class.alembic_migrations_dir)
 
+    # Save current logging state
+    # Required due to a conflict with the alembic upgrade wiping flask log config
+    # saved_log_config = logging.root.manager.loggerDict.copy()
+
     with app.app_context():
-        # Upgrade or load the ARM database to the latest head/version
-        upgrade(directory=config_class.alembic_migrations_dir,
-                revision='head')
+        # # Upgrade or load the ARM database to the latest head/version
+        # upgrade(directory=config_class.alembic_migrations_dir,
+        #         revision='head')
 
         # Initialise the Flask-Login manager
         login_manager.init_app(app)
@@ -73,9 +83,17 @@ def create_app(config_name=os.getenv("FLASK_ENV", "production")):
         from ui.ui_blueprints import register_blueprints
         register_blueprints(app)
 
+        # Register auth user and handler
+        from ui.auth.routes import load_user, unauthorized
+        login_manager.user_loader(load_user)
+        login_manager.unauthorized_handler(unauthorized)
+
         # Initialise ARM and ensure tables are set, when not in Test
         if not config_class.TESTING:
             initialise_arm(app, db)
+
+    # Restore the original log configuration, after flask alembic breaking it
+    # logging.root.manager.loggerDict = saved_log_config
 
     # Remove GET/page loads from logging
     logging.getLogger('werkzeug').setLevel(logging.ERROR)

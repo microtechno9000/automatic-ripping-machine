@@ -24,7 +24,7 @@ page_support_databaseupdate = "support/databaseupdate.html"
 redirect_settings = "/settings"
 
 
-@app.login_manager.user_loader
+# @app.login_manager.user_loader
 def load_user(user_id):
     """
     Logged in check
@@ -38,7 +38,7 @@ def load_user(user_id):
         return None
 
 
-@app.login_manager.unauthorized_handler
+# @app.login_manager.unauthorized_handler
 def unauthorized():
     """
     User isn't authorised to view the page

@@ -7,13 +7,14 @@ Covers
     - dbupdate [POST]
 """
 import flask
-from flask import current_app as app
+from flask import current_app
 from flask import render_template, session, redirect
 from flask_login import login_required
 
 import config.config as cfg
 import ui.ui_utils as ui_utils
-from ui import db
+from ui.main import route_main
+# from ui import db
 from ui.main.forms import SystemInfoLoad
 from ui.settings.ServerUtil import ServerUtil
 from ui.settings.routes import check_hw_transcode_support
@@ -21,14 +22,18 @@ from models.system_info import SystemInfo
 from models.ui_settings import UISettings
 
 
-@app.route('/')
-@app.route('/index.html')
-@app.route('/index')
-@login_required
+@route_main.route('/')
+@route_main.route('/index.html')
+@route_main.route('/index')
 def home():
     """
     The main homepage showing current rips and server stats
     """
+
+    current_app.logger.info("Test info")
+    current_app.logger.debug("Test debug")
+    current_app.logger.warning("Test warning")
+
     # Set UI Config values for cookies
     # the database should be available and data loaded by this point
     try:
@@ -57,8 +62,9 @@ def home():
     jobs = {}
 
     # Set authentication state for index
-    authenticated = ui_utils.authenticated_state()
-    app.logger.debug(f'Authentication state: {authenticated}')
+    # authenticated = ui_utils.authenticated_state()
+    authenticated = True
+    current_app.logger.debug(f'Authentication state: {authenticated}')
 
     response = flask.make_response(render_template("index.html",
                                                    authenticated=authenticated,
@@ -73,7 +79,7 @@ def home():
     return response
 
 
-@app.route('/systemsetup', methods=['GET', 'POST'])
+@route_main.route('/systemsetup', methods=['GET', 'POST'])
 @login_required
 def system_info_load():
     """
@@ -82,12 +88,12 @@ def system_info_load():
     form = SystemInfoLoad()
 
     if form.validate_on_submit():
-        app.logger.debug("*******SystemInfo*******")
-        app.logger.debug(f"name: {str(form.name.data)}")
-        app.logger.debug(f"cpu: {str(form.cpu.data)}")
-        app.logger.debug(f"description: {str(form.description.data)}")
-        app.logger.debug(f"mem_total: {str(form.mem_total.data)}")
-        app.logger.debug("************************")
+        current_app.logger.debug("*******SystemInfo*******")
+        current_app.logger.debug(f"name: {str(form.name.data)}")
+        current_app.logger.debug(f"cpu: {str(form.cpu.data)}")
+        current_app.logger.debug(f"description: {str(form.description.data)}")
+        current_app.logger.debug(f"mem_total: {str(form.mem_total.data)}")
+        current_app.logger.debug("************************")
 
         system_info = SystemInfo(name=str(form.name.data),
                                  description=str(form.description.data))
