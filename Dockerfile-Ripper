@@ -10,6 +10,11 @@
 ###########################################################
 
 ###########################################################
+# TODO: create a base image with main packages
+# add ripper to a base UI config/build
+###########################################################
+
+###########################################################
 # Ripper - Dependencies - Part 1 - Update base image
 ###########################################################
 # base image, used for build stages and final images
@@ -24,7 +29,7 @@ RUN \
     apt upgrade -y -o Dpkg::Options::="--force-confold"
 
 ###########################################################
-# UI - Dependencies - Part 2 - Dependancies and config
+# UI - Dependencies - Part 2 - Configure ARM user
 ###########################################################
 # create an arm group(gid 1000) and an arm user(uid 1000), with password logon disabled
 RUN groupadd -g 1000 arm \
@@ -36,6 +41,9 @@ RUN groupadd -g 1000 arm \
 ENV ARM_UID=1000
 ENV ARM_GID=1000
 
+###########################################################
+# UI - Dependencies - Part 3 - Install Applications
+###########################################################
 RUN install_clean \
         git \
         build-essential \
@@ -58,9 +66,9 @@ RUN install_clean \
 
 # install python reqs
 RUN pip3 install mysql-connector-python
-COPY requirements.txt ./requirements.txt
+COPY requirements_ripper.txt ./requirements_ripper.txt
 RUN pip3 install --upgrade pip wheel setuptools psutil pyudev
-RUN pip3 install --ignore-installed --prefer-binary -r ./requirements.txt
+RUN pip3 install --ignore-installed --prefer-binary -r ./requirements_ripper.txt
 
 # install deps for ripper
 RUN install_clean \
@@ -80,8 +88,7 @@ RUN install_clean \
         lsdvd
 
 # install libdvd-pkg
-RUN \
-    install_clean libdvd-pkg && \
+RUN install_clean libdvd-pkg && \
     dpkg-reconfigure libdvd-pkg
 
 # install makemkv
