@@ -1,7 +1,7 @@
 import time
 
 from models.arm_models import ARMModel
-from ui.ui_setup import db
+from models.db_setup import db
 
 # ARM Model relationship imports, required for db.Relationships to work
 from models.track import Track  # noqa: F401

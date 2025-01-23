@@ -1,5 +1,5 @@
 from models.arm_models import ARMModel
-from ui.ui_setup import db
+from models.db_setup import db
 
 
 class SystemInfo(ARMModel):
@@ -26,9 +26,17 @@ class SystemInfo(ARMModel):
 
     id = db.Column(db.Integer, index=True, primary_key=True)
     name = db.Column(db.String(100))
-    cpu = db.Column(db.String(20))
     description = db.Column(db.Unicode(200))
+    ip_address = db.Column(db.String(16))
+    port = db.Column(db.Integer)
+    arm_type = db.Column(db.String(15))
+    cpu = db.Column(db.String(20))
+    cpu_usage = db.Column(db.Float)
+    cpu_temp = db.Column(db.Float)
     mem_total = db.Column(db.Float())
+    mem_available = db.Column(db.Float())
+    mem_used = db.Column(db.Float())
+    mem_percent = db.Column(db.Float())
 
     def __init__(self, name: str = "ARM Server", description: str = "Automatic Ripping Machine UI server"):
         self.name = name

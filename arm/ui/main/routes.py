@@ -14,7 +14,7 @@ from flask_login import login_required
 import config.config as cfg
 import ui.ui_utils as ui_utils
 from ui.main import route_main
-# from ui import db
+from models.db_setup import db
 from ui.main.forms import SystemInfoLoad
 from ui.settings.ServerUtil import ServerUtil
 from ui.settings.routes import check_hw_transcode_support

@@ -1,5 +1,5 @@
 from models.arm_models import ARMModel
-from ui.ui_setup import db
+from models.db_setup import db
 
 
 class Track(ARMModel):

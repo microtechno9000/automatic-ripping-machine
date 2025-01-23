@@ -1,4 +1,4 @@
-from ui.ui_setup import db
+from models.db_setup import db
 
 
 class ARMModel(db.Model):

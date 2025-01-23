@@ -16,7 +16,7 @@ General status on the database
 Run the below from the `/opt/arm/arm` folder
 
 ```bash
-flash db status
+flash db show
 ```
 
 ## Adding to the database
@@ -24,7 +24,7 @@ flash db status
 Add a database migration, move to the below folder
 Run the below from the `/opt/arm/arm` folder
 
-`flask db migration -m "description of the migration"`
+`flask db migrate -m "description of the migration"`
 
 ## Resolving merge conflicts
 

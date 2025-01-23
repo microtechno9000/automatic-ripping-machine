@@ -12,7 +12,8 @@ from logging.config import dictConfig
 
 from ui.setuplog import setuplog
 from ui.ui_initialise import initialise_arm
-from ui.ui_setup import db, migrate, csrf, login_manager
+from models.db_setup import db
+from ui.ui_setup import migrate, csrf, login_manager
 from ui_config import config_classes
 
 

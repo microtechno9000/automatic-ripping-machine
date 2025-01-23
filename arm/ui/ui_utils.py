@@ -8,7 +8,7 @@ Functions
 """
 from flask_login import current_user
 
-import arm.config.config as cfg
+import config.config as cfg
 
 
 def authenticated_state() -> bool:

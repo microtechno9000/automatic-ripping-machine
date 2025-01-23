@@ -1,1 +1,1 @@
-#!/usr/bin/env python3
+from .db_setup import db
