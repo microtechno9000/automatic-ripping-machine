@@ -6,7 +6,7 @@ Create Date: 2021-03-19 19:22:53.502215
 
 """
 from alembic import op
-
+import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = '6dfe7244b18e'
@@ -16,14 +16,20 @@ depends_on = None
 
 
 def upgrade():
-    op.alter_column("config",
-                    "RAWPATH",
+    op.alter_column(table_name="config",
+                    column_name="RAWPATH",
+                    existing_type=sa.String(length=255),
+                    existing_nullable=True,
                     new_column_name="RAW_PATH")
-    op.alter_column("config",
-                    "ARMPATH",
+    op.alter_column(table_name="config",
+                    column_name="ARMPATH",
+                    existing_type=sa.String(length=255),
+                    existing_nullable=True,
                     new_column_name="TRANSCODE_PATH")
-    op.alter_column("config",
-                    "MEDIA_DIR",
+    op.alter_column(table_name="config",
+                    column_name="MEDIA_DIR",
+                    existing_type=sa.String(length=255),
+                    existing_nullable=True,
                     new_column_name="COMPLETED_PATH")
 
 
