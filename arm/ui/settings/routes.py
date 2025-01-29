@@ -36,7 +36,7 @@ from models.ui_settings import UISettings
 import config.config as cfg
 from ui.settings import DriveUtils
 from ui.settings.forms import SettingsForm, UiSettingsForm, AbcdeForm, SystemInfoDrives
-from ui.settings.ServerUtil import ServerUtil
+from common.ServerDetails import ServerDetails
 from ui.notifications.utils import notify
 
 # Page definitions
@@ -119,7 +119,7 @@ def settings():
 
     # System details in class server
     server = SystemInfo.query.filter_by().first()
-    serverutil = ServerUtil()
+    serverutil = ServerDetails()
 
     # System details in class server
     arm_path = cfg.arm_config['TRANSCODE_PATH']
@@ -149,40 +149,6 @@ def settings():
                            media_path=media_path,
                            drives=drives,
                            form_drive=form_drive)
-
-
-def check_hw_transcode_support():
-    cmd = f"nice {cfg.arm_config['HANDBRAKE_CLI']}"
-
-    app.logger.debug(f"Sending command: {cmd}")
-    hw_support_status = {
-        "nvidia": False,
-        "intel": False,
-        "amd": False
-    }
-    try:
-        hand_brake_output = subprocess.run(f"{cmd}", capture_output=True, shell=True, check=True)
-
-        # NVENC
-        if re.search(r'nvenc: version ([0-9\\.]+) is available', str(hand_brake_output.stderr)):
-            app.logger.info("NVENC supported!")
-            hw_support_status["nvidia"] = True
-        # Intel QuickSync
-        if re.search(r'qsv:\sis(.*?)available\son', str(hand_brake_output.stderr)):
-            app.logger.info("Intel QuickSync supported!")
-            hw_support_status["intel"] = True
-        # AMD VCN
-        if re.search(r'vcn:\sis(.*?)available\son', str(hand_brake_output.stderr)):
-            app.logger.info("AMD VCN supported!")
-            hw_support_status["amd"] = True
-        app.logger.info("Handbrake call successful")
-        # Dump the whole CompletedProcess object
-        app.logger.debug(hand_brake_output)
-    except subprocess.CalledProcessError as hb_error:
-        err = f"Call to handbrake failed with code: {hb_error.returncode}({hb_error.output})"
-        app.logger.error(err)
-
-    return hw_support_status
 
 
 @route_settings.route('/save_settings', methods=['POST'])

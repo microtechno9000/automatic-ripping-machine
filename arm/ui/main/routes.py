@@ -16,8 +16,8 @@ import ui.ui_utils as ui_utils
 from ui.main import route_main
 from models.db_setup import db
 from ui.main.forms import SystemInfoLoad
-from ui.settings.ServerUtil import ServerUtil
-from ui.settings.routes import check_hw_transcode_support
+from common.ServerDetails import ServerDetails
+from ui.settings.utils import check_hw_transcode_support
 from models.system_info import SystemInfo
 from models.ui_settings import UISettings
 
@@ -29,11 +29,6 @@ def home():
     """
     The main homepage showing current rips and server stats
     """
-
-    current_app.logger.info("Test info")
-    current_app.logger.debug("Test debug")
-    current_app.logger.warning("Test warning")
-
     # Set UI Config values for cookies
     # the database should be available and data loaded by this point
     try:
@@ -43,7 +38,7 @@ def home():
 
     # Check if system info is populated, otherwise go to system setup
     server = SystemInfo.query.filter_by().first()
-    server_util = ServerUtil()
+    server_util = ServerDetails()
     if not server:
         return redirect('/systemsetup')
 
@@ -85,25 +80,31 @@ def system_info_load():
     Load system initial system info
     """
     form = SystemInfoLoad()
+    server_util = ServerDetails()
 
     if form.validate_on_submit():
-        current_app.logger.debug("*******SystemInfo*******")
-        current_app.logger.debug(f"name: {str(form.name.data)}")
-        current_app.logger.debug(f"cpu: {str(form.cpu.data)}")
-        current_app.logger.debug(f"description: {str(form.description.data)}")
-        current_app.logger.debug(f"mem_total: {str(form.mem_total.data)}")
-        current_app.logger.debug("************************")
-
         system_info = SystemInfo(name=str(form.name.data),
                                  description=str(form.description.data))
+        system_info.ip_address = "127.0.0.1"
+        system_info.port = 8080
+        system_info.arm_type = "ui"
         system_info.cpu = str(form.cpu.data)
-        system_info.mem_total = form.mem_total.data
+        system_info.cpu_usage = server_util.cpu_util
+        system_info.cpu_temp = server_util.cpu_temp
+        system_info.mem_total = server_util.mem_total
+        system_info.mem_available = server_util.memory_free
+        system_info.mem_used = server_util.memory_used
+        system_info.mem_percent = server_util.memory_percent
+
         db.session.add(system_info)
         db.session.commit()
 
+        current_app.logger.debug("*******SystemInfo*******")
+        current_app.logger.debug(system_info.list_params())
+        current_app.logger.debug("************************")
+
         return redirect("/index")
 
-    server_util = ServerUtil()
     return render_template("systemsetup.html",
                            form=form,
                            server_util=server_util)

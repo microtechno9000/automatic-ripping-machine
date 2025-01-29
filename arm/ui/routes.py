@@ -26,9 +26,9 @@ from arm.models.job import Job
 from arm.models.system_info import SystemInfo
 from arm.models.user import User
 import arm.config.config as cfg
-from arm.ui.forms import DBUpdate
-from arm.ui.settings.ServerUtil import ServerUtil
-from arm.ui.settings.settings import check_hw_transcode_support
+# from arm.ui.forms import DBUpdate
+from common.ServerDetails import ServerDetails
+from arm.ui.settings.utils import check_hw_transcode_support
 
 # This attaches the armui_cfg globally to let the users use any bootswatch skin from cdn
 armui_cfg = ui_utils.arm_db_cfg()
@@ -62,7 +62,7 @@ def home():
 
     # System details in class server
     server = SystemInfo.query.filter_by(id="1").first()
-    serverutil = ServerUtil()
+    serverutil = ServerDetails()
 
     # System details in class server
     arm_path = cfg.arm_config['TRANSCODE_PATH']

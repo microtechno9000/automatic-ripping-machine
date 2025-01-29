@@ -37,7 +37,14 @@ class SystemInfo(ARMModel):
     mem_available = db.Column(db.Float())
     mem_used = db.Column(db.Float())
     mem_percent = db.Column(db.Float())
+    storage_config_available = db.Column(db.Float())
+    storage_config_used = db.Column(db.Float())
+    storage_transcode_available = db.Column(db.Float())
+    storage_transcode_used = db.Column(db.Float())
+    storage_completed_available = db.Column(db.Float())
+    storage_completed_used = db.Column(db.Float())
+    last_update_time = db.Column(db.DateTime)
 
-    def __init__(self, name: str = "ARM Server", description: str = "Automatic Ripping Machine UI server"):
+    def __init__(self, name: str = "ARM Server", description: str = "Automatic Ripping Machine (ARM) server"):
         self.name = name
         self.description = description

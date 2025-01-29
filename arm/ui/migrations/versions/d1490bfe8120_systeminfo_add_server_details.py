@@ -17,30 +17,21 @@ depends_on = None
 
 
 def upgrade():
-    op.add_column('system_info',
-                  sa.Column('ip_address', sa.String(length=16))
-                  )
-    op.add_column('system_info',
-                  sa.Column('port', sa.Integer())
-                  )
-    op.add_column('system_info',
-                  sa.Column('arm_type', sa.String(length=15))
-                  )
-    op.add_column('system_info',
-                  sa.Column('cpu_usage', sa.Float())
-                  )
-    op.add_column('system_info',
-                  sa.Column('cpu_temp', sa.Float())
-                  )
-    op.add_column('system_info',
-                  sa.Column('mem_available', sa.Float())
-                  )
-    op.add_column('system_info',
-                  sa.Column('mem_used', sa.Float())
-                  )
-    op.add_column('system_info',
-                  sa.Column('mem_percent', sa.Float())
-                  )
+    op.add_column('system_info', sa.Column('ip_address', sa.String(length=16)))
+    op.add_column('system_info', sa.Column('port', sa.Integer()))
+    op.add_column('system_info', sa.Column('arm_type', sa.String(length=15)))
+    op.add_column('system_info', sa.Column('cpu_usage', sa.Float()))
+    op.add_column('system_info', sa.Column('cpu_temp', sa.Float()))
+    op.add_column('system_info', sa.Column('mem_available', sa.Float()))
+    op.add_column('system_info', sa.Column('mem_used', sa.Float()))
+    op.add_column('system_info', sa.Column('mem_percent', sa.Float()))
+    op.add_column('system_info', sa.Column('storage_config_available', sa.Float()))
+    op.add_column('system_info', sa.Column('storage_config_used', sa.Float()))
+    op.add_column('system_info', sa.Column('storage_transcode_available', sa.Float()))
+    op.add_column('system_info', sa.Column('storage_transcode_used', sa.Float()))
+    op.add_column('system_info', sa.Column('storage_completed_available', sa.Float()))
+    op.add_column('system_info', sa.Column('storage_completed_used', sa.Float()))
+    op.add_column('system_info', sa.Column('last_update_time', sa.DateTime()))
 
 
 def downgrade():
@@ -52,3 +43,4 @@ def downgrade():
     op.drop_column('system_info', 'mem_available')
     op.drop_column('system_info', 'mem_used')
     op.drop_column('system_info', 'mem_percent')
+    op.drop_column('system_info', 'last_update_time')
