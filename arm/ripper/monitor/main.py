@@ -1,5 +1,10 @@
 """
+Automatic Ripping Machine (ARM) - Ripper Monitor
 
+This script runs as a background process, generating system information for the running ripper docker container.
+Once running, will push current system information to the ARM database for the UI to access and status
+
+This script is not for monitoring jobs, just the status of the ripper docker container
 """
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -8,8 +13,10 @@ from datetime import datetime
 
 from ripper.monitor.MonitorConfig import MonitorConfig
 from ripper.monitor.LoggerConfig import setup_logging
+from common.database_manager import get_alembic_version
 from common.ServerDetails import ServerDetails
-from common.ServerIP import detect_ip
+from common.server_ip import detect_ip
+from models.alembic_version import AlembicVersion
 from models.system_info import SystemInfo
 from models.db_setup import db
 
@@ -27,11 +34,20 @@ if __name__ == '__main__':
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    # Add in check for the current database version
-        # valid - keep going
+    # Check database is current before monitoring
+    while True:
+        # Refresh the session cache
+        # session.expire_all()
+        alembic_version = get_alembic_version()
+        database_version = session.query(AlembicVersion).first()
+        logger.debug(f"Alembic Version: {alembic_version} Database Version: {database_version.version_num}")
 
-        # not current - wait for a while (UI can fix the database)
-        # once finished waiting, bug out
+        if database_version.version_num == alembic_version:
+            break  # Exit loop if current
+
+        logger.info("Alembic Version does not match database version. Waiting 60 seconds then checking again")
+        session.close()
+        sleep(60)
 
     # Check if ripper details exist
     server_ripper = session.query(SystemInfo).filter_by(arm_type="ripper",
@@ -43,7 +59,7 @@ if __name__ == '__main__':
     if server_ripper is None:
         logger.info("Adding ripper into database")
         server_ripper = SystemInfo(name="ARM Ripper",
-                                 description="Separate ARM Ripper container")
+                                   description="Separate ARM Ripper container")
         server_ripper.ip_address = system_ip
         server_ripper.port = 8080
         server_ripper.arm_type = "ripper"
@@ -78,6 +94,7 @@ if __name__ == '__main__':
         server_ripper.mem_available = server_details.memory_free
         server_ripper.mem_used = server_details.memory_used
         server_ripper.mem_percent = server_details.memory_percent
+        server_ripper.last_update_time = datetime.now()
         session.add(server_ripper)
         session.commit()
         logger.debug("*" * 40)
@@ -88,6 +105,6 @@ if __name__ == '__main__':
         logger.debug(f"{'Memory Used:':<{string_padding}} {server_ripper.mem_used:>{value_padding}.2f} GB")
         logger.debug(f"{'Memory Percent:':<{string_padding}} {server_ripper.mem_percent:>{value_padding}.2f} %")
         logger.info(f"{'Last Update Time:':<{string_padding}} "
-              f"{server_ripper.last_update_time.strftime('%Y-%m-%d %H:%M:%S')}")
+                    f"{server_ripper.last_update_time.strftime('%Y-%m-%d %H:%M:%S')}")
         logger.debug("*" * 40)
-        sleep(1)
+        sleep(60)

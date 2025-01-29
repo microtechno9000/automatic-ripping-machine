@@ -11,7 +11,7 @@ Automatic Ripping Machine - User Interface (UI)
 """
 import os
 from config import config as cfg
-from common.ServerIP import detect_ip
+from common.server_ip import detect_ip
 
 
 def is_docker() -> bool:

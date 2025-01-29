@@ -23,5 +23,5 @@ class AlembicVersion(ARMModel):
 
     version_num = db.Column(db.String(36), autoincrement=False, primary_key=True)
 
-    def __init__(self, version: str = None):
-        self.version_num = version
+    # def __init__(self, version: str = None):
+    #     self.version_num = version
