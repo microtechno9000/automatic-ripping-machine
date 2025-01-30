@@ -2,6 +2,7 @@
 Automatic Ripping Machine - User Interface (UI)
     UI Flask Blueprints
 """
+from ui.context.routes import inject_arm_cfg
 from ui.main import route_main
 from ui.errors import route_error
 from ui.settings import route_settings
@@ -15,6 +16,7 @@ from ui.notifications import route_notifications
 
 
 def register_blueprints(app):
+    # app.register_blueprint(route_context)
     app.register_blueprint(route_main)
     app.register_blueprint(route_error)
     app.register_blueprint(route_settings)

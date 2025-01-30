@@ -11,6 +11,7 @@ from flask import current_app
 from flask import render_template, session, redirect
 from flask_login import login_required
 
+from flask import current_app as app
 import config.config as cfg
 import ui.ui_utils as ui_utils
 from ui.main import route_main
@@ -19,7 +20,6 @@ from ui.main.forms import SystemInfoLoad
 from common.ServerDetails import ServerDetails
 from ui.settings.utils import check_hw_transcode_support
 from models.system_info import SystemInfo
-from models.ui_settings import UISettings
 
 
 @route_main.route('/')
@@ -29,12 +29,7 @@ def home():
     """
     The main homepage showing current rips and server stats
     """
-    # Set UI Config values for cookies
-    # the database should be available and data loaded by this point
-    try:
-        armui_cfg = UISettings.query.filter_by().first()
-    except Exception as error:
-        return render_template('error.html', error=error)
+    # app.logger.debug(armui_cfg)
 
     # Check if system info is populated, otherwise go to system setup
     server = SystemInfo.query.filter_by().first()
@@ -60,17 +55,17 @@ def home():
     authenticated = ui_utils.authenticated_state()
     current_app.logger.debug(f'Authentication state: {authenticated}')
 
-    response = flask.make_response(render_template("index.html",
-                                                   authenticated=authenticated,
-                                                   jobs=jobs,
-                                                   children=cfg.arm_config['ARM_CHILDREN'],
-                                                   server=server,
-                                                   serverutil=server_util,
-                                                   arm_path=arm_path,
-                                                   media_path=media_path,
-                                                   stats=stats))
-    response.set_cookie("index_refresh", value=f"{armui_cfg.index_refresh}")
-    return response
+    # response = flask.make_response()
+    # response.set_cookie("index_refresh", value=f"{armui_cfg.index_refresh}")
+    return render_template("index.html",
+                           authenticated=authenticated,
+                           jobs=jobs,
+                           children=cfg.arm_config['ARM_CHILDREN'],
+                           server=server,
+                           serverutil=server_util,
+                           arm_path=arm_path,
+                           media_path=media_path,
+                           stats=stats)
 
 
 @route_main.route('/systemsetup', methods=['GET', 'POST'])

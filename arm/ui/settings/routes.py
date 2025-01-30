@@ -36,6 +36,7 @@ from models.ui_settings import UISettings
 import config.config as cfg
 from ui.settings import DriveUtils
 from ui.settings.forms import SettingsForm, UiSettingsForm, AbcdeForm, SystemInfoDrives
+from ui.settings.utils import check_hw_transcode_support
 from common.ServerDetails import ServerDetails
 from ui.notifications.utils import notify
 
