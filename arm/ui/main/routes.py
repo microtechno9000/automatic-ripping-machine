@@ -29,13 +29,13 @@ def home():
     """
     The main homepage showing current rips and server stats
     """
-    # app.logger.debug(armui_cfg)
-
     # Check if system info is populated, otherwise go to system setup
-    server = SystemInfo.query.filter_by().first()
-    server_util = ServerDetails()
-    if not server:
+    arm_ui = SystemInfo.query.filter_by(arm_type="ui").first()
+    if not arm_ui:
         return redirect('/systemsetup')
+
+    # Load each of the ARM Server details
+    arm_servers = SystemInfo.query.filter_by().all()
 
     # Push out HW transcode status for homepage
     stats = {'hw_support': check_hw_transcode_support()}
@@ -61,8 +61,7 @@ def home():
                            authenticated=authenticated,
                            jobs=jobs,
                            children=cfg.arm_config['ARM_CHILDREN'],
-                           server=server,
-                           serverutil=server_util,
+                           arm_servers=arm_servers,
                            arm_path=arm_path,
                            media_path=media_path,
                            stats=stats)

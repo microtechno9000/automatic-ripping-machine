@@ -7,172 +7,161 @@
     <div class="container content">
         <div class="row">
             <div class="col pt-3">
-                <div class="card mx-auto">
-                    <div class="card-header text-center">
-                        <strong>System</strong>
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">
-                            Name: {{ server.name }}
-                        </li>
-                        <li class="list-group-item">
-                            {{ server.description }}
-                        </li>
-                        <li class="list-group-item">
-                            CPU: {{ server.cpu }}
-                        </li>
-                        <li class="list-group-item">
-                            {% if serverutil.cpu_temp is not none %}
-                                <section class="{{ ' bg-danger text-white' if serverutil.cpu_temp > 70 }}">CPU
-                                    Temp: {{ serverutil.cpu_temp }}&#176;C
-                                </section>
+                {% for server in arm_servers %}
+                    <div class="card mx-auto">
+                        <div class="card-header text-center">
+                            {% if server.arm_type == "ui" %}
+                                <strong>System - Web </strong>
                             {% else %}
-                                <section> Temp: not reported</section>
+                                <strong>System - Ripper </strong>
                             {% endif %}
-                        </li>
-                        <li class="list-group-item">
-                            <h6 class="progress-label" style="float: left;margin-right: 1em;">Usage: </h6>
-                            <div class="progress">
-                                <div class="progress-bar{{ ' bg-danger' if serverutil.cpu_util > 80 }}"
-                                     role="progressbar"
-                                     style="width: {{ ' 10' if serverutil.cpu_util < 10 else serverutil.cpu_util }}%;"
-                                     aria-valuenow="{{ serverutil.cpu_util }}" aria-valuemin="0" aria-valuemax="100">
-                                    {{ serverutil.cpu_util }}%
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col pt-3">
-                <div class="card mx-auto">
-                    <div class="card-header text-center">
-                        <strong>System Memory</strong>
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">
-                            Total: {{ server.mem_total }} GB
-                            <br>Free: {{ serverutil.memory_free }} GB
-                            <br>Used: {{ serverutil.memory_used }} GB
-                        </li>
-                        <li class="list-group-item">
-                            <h6 class="progress-label" style="float: left;margin-right: 1em;">Usage: </h6>
-                            <div class="progress">
-                                <div class="progress-bar{{ ' bg-danger' if serverutil.memory_percent > 80 }}"
-                                     role="progressbar"
-                                     style="width: {{ serverutil.memory_percent }}%;"
-                                     aria-valuenow="{{ serverutil.memory_percent }}" aria-valuemin="0"
-                                     aria-valuemax="100">
-                                    {{ serverutil.memory_percent }}%
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col pt-3">
-                <div class="card mx-auto">
-                    <div class="card-header text-center">
-                        <strong>Storage</strong>
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">
-                            {% if server.storage_transcode_free != 0 %}
-                                <h6 class="progress-label" style="float: left;margin-right: 1em;">Transcode: </h6>
-                                <div class="progress">
-                                    <div class="progress-bar{{ ' bg-danger' if serverutil.storage_transcode_percent > 80 }}"
-                                         role="progressbar"
-                                         style="width: {{ serverutil.storage_transcode_percent }}%;"
-                                         aria-valuenow="{{ serverutil.storage_transcode_percent }}"
-                                         aria-valuemin="0"
-                                         aria-valuemax="100">{{ serverutil.storage_transcode_percent }}%
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <div class="row">
+                                    <div class="col">
+                                        {{ server.name }}
+                                    </div>
+                                    <div class="col">
+                                        {{ server.description }}
                                     </div>
                                 </div>
-                                <br> Free Space: {{ serverutil.storage_transcode_free }} GB
-                            {% else %}
-                                Transcode: Unable to get data on path
-                            {% endif %}
-                            <br>Path: {{ arm_path }}
-                        </li>
-                        <li class="list-group-item">
-                            {% if serverutil.storage_completed_free != 0 %}
-                                <h6 class="progress-label" style="float: left;margin-right: 1em;">Completed: </h6>
-                                <div class="progress">
-                                    <div class="progress-bar{{ ' bg-danger' if serverutil.storage_completed_percent > 80 }}"
-                                         role="progressbar"
-                                         style="width: {{ serverutil.storage_completed_percent }}%;"
-                                         aria-valuenow="{{ serverutil.storage_completed_percent }}"
-                                         aria-valuemin="0"
-                                         aria-valuemax="100">{{ serverutil.storage_completed_percent }}%
+                                <div class="row">
+                                    <div class="col">
+                                        {{ server.cpu }}
+                                    </div>
+                                    <div class="col">
+                                        {% if server.arm_type == "ripper" %}
+                                            [Intel:
+                                            {% if server.hardware_intel %}
+                                                <img src="{{ url_for('static', filename='img/success.png') }}" alt="update" width="20px" height="20px">
+                                            {% else %}
+                                                <img src="{{ url_for('static', filename='img/fail.png') }}" alt="update" width="20px" height="20px">
+                                            {% endif %}
+                                            ] [Nvidia:
+                                            {% if server.hardware_nvidia %}
+                                                <img src="{{ url_for('static', filename='img/success.png') }}" alt="update" width="20px" height="20px">
+                                            {% else %}
+                                                <img src="{{ url_for('static', filename='img/fail.png') }}" alt="update" width="20px" height="20px">
+                                            {% endif %}
+                                            ] [AMD:
+                                            {% if server.hardware_amd %}
+                                                <img src="{{ url_for('static', filename='img/success.png') }}" alt="update" width="20px" height="20px">
+                                            {% else %}
+                                                <img src="{{ url_for('static', filename='img/fail.png') }}" alt="update" width="20px" height="20px">
+                                            {% endif %}]
+                                        {% endif %}
                                     </div>
                                 </div>
-                                <br> Free Space: {{ serverutil.storage_completed_free }} GB
-                            {% else %}
-                                Completed: Unable to get data on path
+                            </li>
+                            <li class="list-group-item">
+                                <div class="row">
+                                    <div class="col">
+                                        {% if server.cpu_temp is not none %}
+                                        <section class="{{ ' bg-danger text-white' if server.cpu_temp > 70 }}">
+                                            CPU Temp: {{ server.cpu_temp }}&#176;C
+                                        </section>
+                                    {% else %}
+                                        CPU Temp: not reported
+                                    {% endif %}
+                                    </div>
+                                    <div class="col">
+                                        <div class="progress">
+                                            <div class="progress-bar{{ ' bg-danger' if server.cpu_usage > 80 }}"
+                                                 role="progressbar"
+                                                 style="width: {{ ' 10' if server.cpu_usage < 10 else server.cpu_usage }}%;"
+                                                 aria-valuenow="{{ server.cpu_usage }}" aria-valuemin="0" aria-valuemax="100">
+                                                {{ server.cpu_usage }}%
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        Memory: {{ server.mem_total }}GB Used: {{ server.mem_used }}GB Free: {{ server.mem_available }}GB
+                                    </div>
+                                    <div class="col">
+                                        <div class="progress">
+                                            <div class="progress-bar{{ ' bg-danger' if server.mem_percent > 80 }}"
+                                                 role="progressbar"
+                                                 style="width: {{ server.mem_percent }}%;"
+                                                 aria-valuenow="{{ server.mem_percent }}" aria-valuemin="0"
+                                                 aria-valuemax="100">
+                                                {{ server.mem_percent }}%
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            {% if server.arm_type == "ripper" %}
+                                <li class="list-group-item">
+                                    <div class="row">
+                                        <div class="col">
+                                            Storage: Config [{{ server.storage_config_available }}GB free]
+                                        </div>
+                                        <div class="col">
+                                            {% if server.storage_config_percent is not none %}
+                                                <div class="progress">
+                                                    <div class="progress-bar{{ ' bg-danger' if server.storage_config_percent > 80 }}"
+                                                         role="progressbar"
+                                                         style="width: {{ server.storage_config_percent }}%;"
+                                                         aria-valuenow="{{ server.storage_config_percent }}"
+                                                         aria-valuemin="0"
+                                                         aria-valuemax="100">{{ server.storage_config_percent }}%
+                                                    </div>
+                                                </div>
+                                            {% else %}
+                                                No value reported
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            Storage: Transcode [{{ server.storage_transcode_available }}GB free]
+                                        </div>
+                                        <div class="col">
+                                            {% if server.storage_transcode_percent is not none %}
+                                                <div class="progress">
+                                                    <div class="progress-bar{{ ' bg-danger' if server.storage_transcode_percent > 80 }}"
+                                                         role="progressbar"
+                                                         style="width: {{ server.storage_transcode_percent }}%;"
+                                                         aria-valuenow="{{ server.storage_transcode_percent }}"
+                                                         aria-valuemin="0"
+                                                         aria-valuemax="100">{{ server.storage_transcode_percent }}%
+                                                    </div>
+                                                </div>
+                                            {% else %}
+                                                No value reported
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            Storage: Completed [{{ server.storage_completed_available }}GB free]
+                                        </div>
+                                        <div class="col">
+                                            {% if server.storage_completed_percent is not none %}
+                                                <div class="progress">
+                                                    <div class="progress-bar{{ ' bg-danger' if server.storage_completed_percent > 80 }}"
+                                                         role="progressbar"
+                                                         style="width: {{ server.storage_completed_percent }}%;"
+                                                         aria-valuenow="{{ server.storage_completed_percent }}"
+                                                         aria-valuemin="0"
+                                                         aria-valuemax="100">{{ server.storage_completed_percent }}%
+                                                    </div>
+                                                </div>
+                                            {% else %}
+                                                No value reported
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </li>
                             {% endif %}
-                            <br>Path: {{ media_path }}
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col pt-3"></div>
-            <div class="col pt-3">
-                <div class="card mx-auto">
-                    <div class="card-header text-center">
-                        <strong>HardWare Transcoding support</strong>
+                        </ul>
                     </div>
-                    <ul class="list-group list-group-flush">
-                        <!-- INTEL -->
-                        <li class="list-group-item text-center">
-                            Intel QuickSync: {% if stats['hw_support']['intel'] %}
-                            <img src="{{ url_for('static', filename='img/success.png') }}"
-                                 alt="update" width="20px" height="20px">
-                        {% else %}
-                            <img src="{{ url_for('static', filename='img/fail.png') }}"
-                                 alt="update" width="20px" height="20px">
-                            <a href="https://github.com/automatic-ripping-machine/automatic-ripping-machine/wiki/"
-                               target=”_blank”>
-                                <img title="Get Help from the wiki!"
-                                     src="{{ url_for('static', filename='img/info.png') }}" width="20px"
-                                     height="20px" alt="Get Help from the wiki!"></a>
-                        {% endif %}
-                        </li>
-                        <!-- NVIDIA -->
-                        <li class="list-group-item text-center">
-                            Nvidia NVENC:{% if stats['hw_support']['nvidia'] %}
-                            <img src="{{ url_for('static', filename='img/success.png') }}"
-                                 alt="update" width="20px" height="20px">
-                        {% else %}
-                            <img src="{{ url_for('static', filename='img/fail.png') }}"
-                                 alt="update" width="20px" height="20px">
-                            <a href="https://github.com/automatic-ripping-machine/automatic-ripping-machine/wiki/"
-                               target=”_blank”>
-                                <img title="Get Help from the wiki!"
-                                     src="{{ url_for('static', filename='img/info.png') }}" width="20px"
-                                     height="20px" alt="Get Help from the wiki!"></a>
-                        {% endif %}
-                        </li>
-                        <!-- AMD -->
-                        <li class="list-group-item text-center">
-                            AMD VCN:{% if stats['hw_support']['amd'] %}
-                            <img src="{{ url_for('static', filename='img/success.png') }}"
-                                 alt="update" width="20px" height="20px">
-                        {% else %}
-                            <img src="{{ url_for('static', filename='img/fail.png') }}"
-                                 alt="update" width="20px" height="20px">
-                            <a href="https://github.com/automatic-ripping-machine/automatic-ripping-machine/wiki/"
-                               target=”_blank”>
-                                <img title="Get Help from the wiki!"
-                                     src="{{ url_for('static', filename='img/info.png') }}" width="20px"
-                                     height="20px" alt="Get Help from the wiki!"></a>
-                        {% endif %}
-                        </li>
-                    </ul>
-                </div>
+                    <br>
+                {% endfor %}
             </div>
-            <div class="col pt-3"></div>
         </div>
     </div>
 {% endblock %}

@@ -18,7 +18,6 @@ Covers
 import os
 import platform
 import importlib
-import re
 import subprocess
 from flask_login import login_required
 from flask import render_template, request, flash, redirect, session
@@ -118,9 +117,8 @@ def settings():
     # ARM UI config
     armui_cfg = UISettings.query.filter_by().first()
 
-    # System details in class server
-    server = SystemInfo.query.filter_by().first()
-    serverutil = ServerDetails()
+    # Load each of the ARM Server details
+    arm_servers = SystemInfo.query.filter_by().all()
 
     # System details in class server
     arm_path = cfg.arm_config['TRANSCODE_PATH']
@@ -144,8 +142,7 @@ def settings():
                            form=form,
                            jsoncomments=comments,
                            abcde_cfg=cfg.abcde_config,
-                           server=server,
-                           serverutil=serverutil,
+                           arm_servers=arm_servers,
                            arm_path=arm_path,
                            media_path=media_path,
                            drives=drives,

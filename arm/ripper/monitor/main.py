@@ -63,13 +63,30 @@ if __name__ == '__main__':
         server_ripper.ip_address = system_ip
         server_ripper.port = 8080
         server_ripper.arm_type = "ripper"
+        # CPU Details
         server_ripper.cpu = server_details.cpu
         server_ripper.cpu_usage = server_details.cpu_util
         server_ripper.cpu_temp = server_details.cpu_temp
+        # Memory Details
         server_ripper.mem_total = server_details.mem_total
         server_ripper.mem_available = server_details.memory_free
         server_ripper.mem_used = server_details.memory_used
         server_ripper.mem_percent = server_details.memory_percent
+        # Storage Info
+        server_ripper.storage_config_available = 0
+        server_ripper.storage_config_used = 0
+        server_ripper.storage_config_percent = 0
+        server_ripper.storage_transcode_available = server_details.storage_transcode_free
+        server_ripper.storage_transcode_used = 0
+        server_ripper.storage_transcode_percent = server_details.storage_transcode_percent
+        server_ripper.storage_completed_available = server_details.storage_completed_free
+        server_ripper.storage_completed_used = 0
+        server_ripper.storage_completed_percent = server_details.storage_completed_percent
+        # Graphics card info
+        server_ripper.hardware_intel = False
+        server_ripper.hardware_nvidia = False
+        server_ripper.hardware_amd = False
+        # Last update time
         server_ripper.last_update_time = datetime.now()
         session.add(server_ripper)
         session.commit()
@@ -94,6 +111,16 @@ if __name__ == '__main__':
         server_ripper.mem_available = server_details.memory_free
         server_ripper.mem_used = server_details.memory_used
         server_ripper.mem_percent = server_details.memory_percent
+        # Update storage
+        server_ripper.storage_config_available = 0
+        server_ripper.storage_config_used = 0
+        server_ripper.storage_config_percent = 0
+        server_ripper.storage_transcode_available = server_details.storage_transcode_free
+        server_ripper.storage_transcode_used = 0
+        server_ripper.storage_transcode_percent = server_details.storage_transcode_percent
+        server_ripper.storage_completed_available = server_details.storage_completed_free
+        server_ripper.storage_completed_used = 0
+        server_ripper.storage_completed_percent = server_details.storage_completed_percent
         server_ripper.last_update_time = datetime.now()
         session.add(server_ripper)
         session.commit()
