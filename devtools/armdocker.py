@@ -40,13 +40,13 @@ def dockercompose_rebuild(monitor):
 
     log.info("Rebuilding docker image post ARM update")
     # Stop ARM container
-    armui.run_command("docker-compose down --rmi local", "Stop ARM and MySQL containers, and remove images")
+    armui.run_command("docker compose stop", "Stop ARM and MySQL containers")
     # Remove the ARM container
     # armui.run_command("docker-compose rm -f", "ARM Docker container deleted")
     # ARM rebuild
-    armui.run_command("docker-compose build", "ARM Docker container rebuilt")
+    armui.run_command("docker compose build", "ARM Docker container rebuild")
     # Start ARM
     if monitor:
-        armui.run_command("docker-compose up", "Started ARM Container, in monitor mode")
+        armui.run_command("docker compose up", "Started ARM Container, in monitor mode")
     else:
-        armui.run_command("docker-compose up -d", "Started ARM Container")
+        armui.run_command("docker compose up -d", "Started ARM Container")

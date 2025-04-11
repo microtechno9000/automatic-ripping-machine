@@ -30,7 +30,7 @@ waitress==3.0.1
 
 # Additional Python packages
 psutil==6.1.0
-pyudev==0.21.0
+pyudev==0.22.0
 
 # Required for developers conducting testing
 pytest==8.1.1

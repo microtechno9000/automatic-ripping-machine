@@ -17,63 +17,48 @@
 
 
 ###########################################################
-# UI - Dependencies - Part 1 - Update base image
+# UI - Dependencies - Part 1 - Update and install packages
 ###########################################################
-# base image, used for build stages and final images
+# Build ARM from the phusion baseimage (Ubuntu Noble 24.04)
 FROM phusion/baseimage:jammy-1.0.4 AS ui-deps
-RUN mkdir /opt/arm
-WORKDIR /opt/arm
+RUN mkdir /opt/arm /arm
 
-# start by updating and upgrading the OS
-RUN \
-    apt clean && \
-    apt update && \
+# Update base ubuntu image
+RUN apt update && \
     apt upgrade -y -o Dpkg::Options::="--force-confold"
 
-###########################################################
-# UI - Dependencies - Part 2 - Configure ARM user
-###########################################################
-# TODO: Fix this with the rest of Noble updates
-# Remove the existing ubuntu uid 1000
-#RUN touch /var/mail/ubuntu \
-#    && chown ubuntu /var/mail/ubuntu \
-#    && userdel -r ubuntu
-
-# Create an arm group(gid 1000) and an arm user(uid 1000), with password logon disabled
-RUN groupadd -g 1000 arm \
-    && useradd -rm -d /home/arm -s /bin/bash -g arm -G video,cdrom -u 1000 arm
-
-# set the default environment variables
-# UID and GID are not settable as of https://github.com/phusion/baseimage-docker/pull/86, as doing so would
-# break multi-account containers
-ENV ARM_UID=1000
-ENV ARM_GID=1000
-
-###########################################################
-# UI - Dependencies - Part 3 - Install Applications
-###########################################################
-# git - required for updates to the ARM UI from within
+# Install required packages
 # build-essential - required for pip3 installation of python packages
 # python3 - ARM runs on python
 # python3-dev - required for python packages
 # python3-pip - required as the Python installer
-# gosu - docker user manager
+# vim - handy editor
 RUN install_clean \
-        git \
-        build-essential \
-        python3 \
-        python3-dev \
-        python3-pip \
-        gosu
+      build-essential \
+      python3 \
+      python3-pip \
+      python3-venv \
+      python3-dev \
+      vim && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Install python packages
-# Setuptools and wheel required to install some python packages
-RUN pip3 install --upgrade pip setuptools wheel
+###########################################################
+# UI - Dependencies - Part 2 - Setup environment
+###########################################################
+# Set Working Directory
+WORKDIR /opt/arm
+
+# Set Environment Variables (things users won't change)
+ENV ARM_HOME="/arm"
+ENV ARM_CODE="/opt/arm"
+ENV PYTHONPATH=${ARM_CODE}
+
+# Install ARM UI requirements
+###########################################################
+# TODO: fix ui filename
+###########################################################
 COPY requirements_ui.txt ./requirements_ui.txt
 RUN pip3 install --ignore-installed --prefer-binary -r ./requirements_ui.txt
-
-# clean up apt
-RUN apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Container healthcheck
 ###########################################################
@@ -111,32 +96,26 @@ FROM ui-deps as build
 LABEL org.opencontainers.image.source=https://github.com/automatic-ripping-machine/automatic-ripping-machine
 LABEL org.opencontainers.image.license=MIT
 LABEL org.opencontainers.image.description='Automatic Ripping Machine User Interface Container'
-LABEL org.opencontainers.image.version="3.0_dev_1"
+LABEL org.opencontainers.image.version="3.0_dev"
 
-## Setup folders and fstab
-RUN mkdir -m 0777 -p /home/arm /home/arm/config
+# Copy ARM code into image
+COPY . /opt/arm/
+
+# Create ARM startup scripts
+RUN mkdir -p /etc/my_init.d
+COPY ./scripts/docker/runit/arm_setup_ui.sh /etc/my_init.d/arm_setup_ui.sh
+RUN chmod +x /etc/my_init.d/*.sh
 
 # Add ARM UI service
-RUN mkdir /etc/service/armui
+RUN mkdir -p /etc/service/armui
 COPY ./scripts/docker/runsv/armui.sh /etc/service/armui/run
 RUN chmod +x /etc/service/armui/run
 
-# Create our startup scripts
-RUN mkdir -p /etc/my_init.d
-COPY ./scripts/docker/runit/arm_user_files_setup_ui.sh /etc/my_init.d/arm_user_files_setup_ui.sh
-RUN chmod +x /etc/my_init.d/*.sh
-
-# Copy over source code for ARM UI
-COPY . /opt/arm/
-
-# Allow git to be managed from the /opt/arm folders
-RUN git config --global --add safe.directory /opt/arm
-
 CMD ["/sbin/my_init"]
-WORKDIR /home/arm
+WORKDIR /root
 
 ###########################################################
 # UI - Build - Part 2 - Deploy
 ###########################################################
 FROM build AS arm-ui
-LABEL org.opencontainers.image.version="3.0.dev_1"
+LABEL org.opencontainers.image.version="3.0.dev"

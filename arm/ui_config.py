@@ -127,7 +127,7 @@ class UIConfig:
     DOCKER: bool = is_docker()
 
     # Define system logs
-    LOG_DIR: str = '/home/arm/logs'
+    LOG_DIR: str = '/arm/logs'
     LOG_FILENAME: str = 'arm.log'
 
     # Define Flask system state

@@ -26,7 +26,7 @@ def create_app(config_name=os.getenv("FLASK_ENV", "production")):
 
     # Setup logging
     # TODO: change these to a database config for user config
-    log_filename: str = "/home/arm/logs/arm_ui.log"
+    log_filename: str = "/arm/logs/arm_ui.log"
     log_size = 5
     log_count = 2
     dictConfig(setuplog(log_filename, log_size, log_count))
