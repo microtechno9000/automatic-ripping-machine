@@ -45,13 +45,18 @@ RUN install_clean \
 ###########################################################
 # UI - Dependencies - Part 2 - Setup environment
 ###########################################################
-# Set Working Directory
-WORKDIR /opt/arm
+# Create arm user, default id 1000 and group id 1000
+# Create as a system user, with no home folder, shell (/bin/bash)
+RUN groupadd -g 1000 arm \
+    && useradd -r -s /bin/bash -g arm -u 1000 arm
 
 # Set Environment Variables (things users won't change)
 ENV ARM_HOME="/arm"
 ENV ARM_CODE="/opt/arm"
 ENV PYTHONPATH=${ARM_CODE}
+
+# Set Working Directory
+WORKDIR ${ARM_CODE}
 
 # Install ARM UI requirements
 ###########################################################

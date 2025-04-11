@@ -9,26 +9,69 @@
 
 set -euo pipefail
 
-#DEFAULT_UID=1000
-#DEFAULT_GID=1000
+DEFAULT_UID=1000
+DEFAULT_GID=1000
+SUBDIRS="logs logs/progress db"
+RED="\e[31m"
+GREEN="\e[32m"
+BLUE="\e[34m"
+NC="\e[0m"
 
-# Report User and Group info
-echo -e "ARM running as: $(id)"
+###
+# Function to check if the ARM user has ownership of the requested folder
+###
+check_folder_ownership() {
+    local check_dir="$1"  # Get the folder path from the first argument
+    local folder_uid=$(stat -c "%u" "$check_dir")
+    local folder_gid=$(stat -c "%g" "$check_dir")
+
+    echo "Checking ownership of $check_dir"
+
+    if [ "$folder_uid" != "$ARM_UID" ] || [ "$folder_gid" != "$ARM_GID" ]; then
+        echo -e "---------------------------------------------"
+        echo -e "[${RED}ERROR${NC}]: ARM does not have permissions to $check_dir using $ARM_UID:$ARM_GID"
+        echo -e "Folder permissions--> $folder_uid:$folder_gid"
+        echo -e "Setting new permissions to UID:[${BLUE}$ARM_UID${NC}] and gid: [${BLUE}$ARM_GID${NC}]"
+        chown -R $ARM_UID:$ARM_GID $check_dir
+        echo -e "[${GREEN}OK${NC}]: Permissions updated"
+        echo -e "---------------------------------------------"
+    fi
+
+    echo -e "[${GREEN}OK${NC}]: ARM UID and GID set correctly, ARM has access to '$check_dir' using $ARM_UID:$ARM_GID"
+}
+
+### Setup User
+if [[ $ARM_UID -ne $DEFAULT_UID ]]; then
+  echo -e "Updating arm user id from $DEFAULT_UID to $ARM_UID..."
+  usermod -u "$ARM_UID" arm
+elif [[ $ARM_UID -eq $DEFAULT_UID ]]; then
+  echo -e "Updating arm group id $ARM_UID to default (1000)..."
+  usermod -u $DEFAULT_UID arm
+fi
+
+if [[ $ARM_GID -ne $DEFAULT_GID ]]; then
+  echo -e "Updating arm group id from $DEFAULT_GID to $ARM_GID..."
+  groupmod -og "$ARM_GID" arm
+elif [[ $ARM_GID -eq $DEFAULT_GID ]]; then
+  echo -e "Updating arm group id $ARM_GID to default (1000)..."
+  groupmod -og $DEFAULT_GID arm
+fi
 
 ### Setup Files
-# setup needed/expected dirs if not found
-SUBDIRS="logs logs/progress db"
+check_folder_ownership $ARM_HOME
+
+# setup needed directories for the ARM UI
 for dir in $SUBDIRS ; do
   thisDir="$ARM_HOME/$dir"
   if [[ ! -d "$thisDir" ]] ; then
     echo "Creating dir: $thisDir"
     mkdir -p "$thisDir"
     # Set the default ownership to arm instead of root
-    # chown -R $DEFAULT_UID:$DEFAULT_GID "$thisDir"
+    chown -R $ARM_UID:$ARM_GID "$thisDir"
   fi
 done
 
-##### Setup ARM-specific config files if not found
+### Setup ARM-specific config files if not found
 echo "Creating '${ARM_HOME}/config'"
 mkdir -p $ARM_HOME/config
 CONFS="arm.yaml apprise.yaml"
