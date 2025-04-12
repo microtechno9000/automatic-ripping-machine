@@ -7,17 +7,17 @@
     * [Improve system performance and stability](#improve-system-performance-and-stability)
     * [Move from docker to docker-compose](#move-from-docker-to-docker-compose)
     * [Move the database from SQLite to MySQL](#move-the-database-from-sqlite-to-mysql)
+  * [Docker Overview](#docker-overview)
+    * [ARM UI](#arm-ui)
+    * [ARM Ripper](#arm-ripper)
+    * [ARM Database](#arm-database)
+    * [ARM Network](#arm-network)
   * [Setup PyCharm for v3.x](#setup-pycharm-for-v3x)
     * [ARM v2.x](#arm-v2x)
     * [ARM v3.x](#arm-v3x)
     * [ARM Unit Testing - UI](#arm-unit-testing---ui)
     * [ARM Unit Testing - Ripper](#arm-unit-testing---ripper)
     * [MySQL Database Configuration](#mysql-database-configuration)
-  * [Docker Compose Setup](#docker-compose-setup)
-    * [ARM UI](#arm-ui)
-    * [ARM Ripper](#arm-ripper)
-    * [ARM Database](#arm-database)
-    * [ARM Network](#arm-network)
   * [Implementation of Sessions](#implementation-of-sessions-)
 <!-- TOC -->
 
@@ -52,19 +52,20 @@ The following information is intended for the developers (or anyone wishing to h
       - [x] Refactor Models to remove links to ripper code
          - [x] Models refactor
          - [x] Models Unit Test
-      - [ ] Models - remove UI and Ripper dependency to models
+      - [x] Models - remove UI and Ripper dependency to models
       - [x] Config - de-tangle integration
       - [x] Refactor Blueprints to align with Models
       - [ ] Add Unit Testing in for UI pages and key functions
         - completed in part
       - Code cleanup
         - [ ] Remove ui/utils, once code moved out
+        - [ ] Remove all 'todo:' in code
 
 
 2. Move from docker to docker-compose
    - [x] Implemented, docker-compose.yml created and configured
    - [x] Create separate ARM DB Container
-   - [ ] Create separate ARM Ripper Container
+   - [x] Create separate ARM Ripper Container
    - [x] Create separate ARM UI Container
 
 3. Move the database from SQLite to MySQL
@@ -72,9 +73,12 @@ The following information is intended for the developers (or anyone wishing to h
    - [x] Migrate ARM UI
    - [ ] Migrate ARM Ripper
 
-4. Implementation of Sessions
-   - [ ] Pending ARM UI and Ripper rewrite
-   - [x] Create DB structure
+5. Tidy up prior to release
+- [ ] Migrate build scripts into the ARM Dependencies repo
+  - [ ] docker-compose.yml, remove build file
+  - [ ] Dockerfile-UI, Move this into the ARM dependencies repo for users to pull
+  - [ ] temp_add-ppa.sh, copy pulled from ARM dependencies for the build script
+  - [ ] temp_healthcheck.sh, copy pulled from ARM dependencies for the build script
 
 ## v3.x Key Aims
 
@@ -92,6 +96,47 @@ The following information is intended for the developers (or anyone wishing to h
 ### Move the database from SQLite to MySQL
 - **1:** Migrate the current database from SQLite to MySQL
 - **2:** Support user migration of existing databases to the new container
+
+
+## Docker Overview
+ARM has been split into three containers, database, UI and ripper, all connected together via the arm-network.
+The idea splits out the UI and rippers to allow for future flexiability.
+The split allows the UI and ripper(s) to be run on seperate physical machines if a user wants.
+
+All containers are built using docker compose.
+Quick generation of containers can be managed from the ARM Dev Tools using the `-dc` option.
+
+### ARM UI
+**Overview**:
+ARM user interface or web page provides control, configuration and status for all connected rippers.
+
+**Volumes**:
+UI only requires access to the /log, /config and /db folders
+
+**Devices**:
+No devices are passed into the UI, all device scanning occurs within the ripper container via API calls
+
+### ARM Ripper
+**Overview**:
+ARM ripper, manages a ripping job from start to finish reporting data back to the database image.
+
+**Volumes**:
+Requires access to /transcode, /completed and /logs
+
+**Devices**:
+Requires CD, DVD or Blu-ray drives to execute ripping jobs.
+
+### ARM Database
+ARM DB is pulled from the mysql:latest, with minimal configuration required.
+User, password and database need to align with the values entered into the UI and ripper.
+The database only requires a single volume, a local folder for the mysql database to reside.
+
+_Note: The arm-db-test is added for running tests against the database. Avoiding entries into a production database_
+
+### ARM Network
+The ARM network is a docker network link, allowing data to pass between the UI, Ripper and Database.
+For systems where the ripper, UI and database are on separate machines, additional testing will be required.
+
 
 ## Setup PyCharm for v3.x
 PyCharm supports code development and testing, with Docker, MySQL, Flask and Test integration.
@@ -117,7 +162,8 @@ Configuration:
 - Python 3.10
 - Script: /opt/arm/arm/runui.py
 - Working directory: /opt/arm/arm
-- Environment Variables: MYSQL_IP=127.0.0.1;MYSQL_PASSWORD=example;MYSQL_USER=arm
+- Environment Variables:
+  - MYSQL_IP=127.0.0.1;MYSQL_PASSWORD=example;MYSQL_USER=arm;FLASK_DEBUG=1;ARM_HOME=/home/arm
 - Paths to ".env" files: none
 - Flask env: development
 - Enable EnvFile: not checked
@@ -153,46 +199,13 @@ Password: example (same password as Env Variables)
 database: arm
 url: jdbc:mysql://localhost:3306/arm
 
-## Docker Compose Setup
-ARM has been split into three containers, database, UI and ripper, all connected together via the arm-network.
-
-### ARM UI
-The UI is currently built using the temporary build files for ARM v3.x
-Prior to production roll out the following files will need editing:
-- docker-compose.yml
-  - remove build file
-- Dockerfile-UI
-  - Move this into the ARM dependencies repo for users to pull
-- temp_add-ppa.sh
-  - copy pulled from ARM dependencies for the build script
-- temp_healthcheck.sh
-  - copy pulled from ARM dependencies for the build script
-
-**Volumes**
-The UI doesn't need access to all the same volumes as the ripper.
-However, to avoid issues all volumes are currently passed. Work is required to remove the need for these volumes.
-
-**Devices**
-No devices are passed into the UI, as such no CD/DVD/BRAY drives will show when scanning for drives.
-Additional work is required to remove the code and associate with the ripper container loading into the database.
-
-### ARM Ripper
-TBD
-
-### ARM Database
-ARM DB is pulled from the mysql:latest, with minimal configuration required.
-User, password and database need to align with the values entered into the UI and ripper.
-The database only requires a single volume, a local folder for the mysql database to reside.
-
-_Note: The arm-db-test is added for running tests against the database. Avoiding entries into a production database_
-
-### ARM Network
-The ARM network is a docker network link, allowing data to pass between the UI, Ripper and Database.
-For systems where the ripper, UI and database are on separate machines, additional testing will be required.
-
-
 ## Implementation of Sessions 
-Implementation of sessions to be conducted once both the rewrite and docker-compose completed
+Implementation of sessions to be conducted once both the rewrite and docker compose completed
+
+> [!TIP]
+> 
+> Due to the level of work required, sessions will be rolled out at a later date.
+> The base migration ARM 3.x will be rolled out ready for sessions, but not implemented.
 
 Details from Community Discussion - [ARM Sessions for Drives](https://github.com/automatic-ripping-machine/automatic-ripping-machine/discussions/815)
 
