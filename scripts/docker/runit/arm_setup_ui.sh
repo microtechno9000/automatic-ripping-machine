@@ -59,6 +59,10 @@ fi
 
 ### Setup Files
 check_folder_ownership $ARM_HOME
+check_folder_ownership $ARM_CODE
+
+# Add ARM code to the safe folders
+git config --system --add safe.directory $ARM_CODE
 
 # setup needed directories for the ARM UI
 for dir in $SUBDIRS ; do

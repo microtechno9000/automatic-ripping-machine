@@ -58,7 +58,6 @@ ENV PYTHONPATH=${ARM_CODE}
 
 # Set Working Directory
 WORKDIR ${ARM_CODE}
-RUN git config --global --add safe.directory ${ARM_CODE}
 
 # Install ARM UI requirements
 ###########################################################
