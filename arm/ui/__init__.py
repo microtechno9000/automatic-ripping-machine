@@ -25,12 +25,12 @@ def create_app(config_name=os.getenv("FLASK_ENV", "production")):
     config_class = config_classes.get(config_name.lower())
 
     # Setup logging
-    # TODO: change these to a database config for user config
-    log_filename: str = "/arm/logs/arm_ui.log"
-    log_size = 5
-    log_count = 2
-    dictConfig(setuplog(log_filename, log_size, log_count))
+    dictConfig(setuplog(config_class.LOG_PATH,
+                        config_class.LOG_SIZE,
+                        config_class.LOG_COUNT,
+                        ))
 
+    # Start Flask Web Server
     app = Flask(__name__)
 
     # Flask application configuration
@@ -42,6 +42,9 @@ def create_app(config_name=os.getenv("FLASK_ENV", "production")):
     app.logger.debug(f"Starting Flask app: {__name__}")
     app.logger.info(f"Setting log level to: {config_class.LOGLEVEL}")
     app.logger.setLevel(config_class.LOGLEVEL)
+    app.logger.debug(f"Logging file: {config_class.LOG_PATH}"
+                     f" max size: {config_class.LOG_SIZE}"
+                     f" log count: {config_class.LOG_COUNT}")
 
     # Report system state for debugging
     app.logger.debug(f'Starting ARM in [{config_class.ENV}] mode')

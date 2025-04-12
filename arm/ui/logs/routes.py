@@ -10,7 +10,7 @@ Covers
 import os
 from pathlib import Path
 from flask_login import login_required
-from flask import render_template, request, send_file, session
+from flask import render_template, request, send_file, session, flash
 from werkzeug.routing import ValidationError
 from flask import current_app as app
 
@@ -63,15 +63,14 @@ def list_logs(path):
     full_path = str(os.path.join(base_path, path))
     session["page_title"] = "Logs"
 
-    # Deal with bad data
-    if not os.path.exists(full_path):
-        raise ValidationError
-
     # Get all files in directory
-    files = utils.get_info(full_path)
+    directory_info = utils.get_info(full_path)
+
+    if directory_info['error']:
+        flash(directory_info['error_string'], "danger")
 
     return render_template('logfiles.html',
-                           files=files,
+                           files=directory_info['file_list'],
                            date_format=cfg.arm_config['DATE_FORMAT'])
 
 

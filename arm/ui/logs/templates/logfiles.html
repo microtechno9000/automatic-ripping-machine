@@ -44,56 +44,55 @@
         }
     </style>
     <div class="container">
-    <div class="row">
-        <div class="col-12">
-            <div class="table-responsive">
-                <div class="jumbotron">
-                    <div class="row">
-                        <table class="table table-striped table-hover">
-                            <caption>Log files in the log directory</caption>
-                            <thead class="thead-dark">
-                            <tr>
-                                <th scope="col" style="cursor: pointer;">Log file</th>
-                                <th scope="col" style="cursor: pointer;">Created Time</th>
-                                <th scope="col" style="cursor: pointer;">Size(kb)</th>
-                                <th scope="col" colspan="4" style="cursor: default;" class="text-center" data-sorter="false">View modes</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for file in files %}
+        <div class="row">
+            <div class="col-12">
+                <div class="table-responsive">
+                    <div class="jumbotron">
+                        <div class="row">
+                            <table class="table table-striped table-hover">
+                                <caption>Log files in the log directory</caption>
+                                <thead class="thead-dark">
                                 <tr>
-                                    <th scope="row" class="text-wrap">{{ file[0]|truncate(30, True) }}</th>
-                                    <td class="text-wrap">{{ file[1] }}</td>
-                                    <td>{{ file[3] }}</td>
-                                    <td><a href="logs?logfile={{ file[0] }}&mode=tail">tail</a></td>
-                                    <td><a href="logs?logfile={{ file[0] }}&mode=armcat">arm</a></td>
-                                    <td><a href="logs?logfile={{ file[0] }}&mode=full">full</a></td>
-                                    <td><a href="logreader?logfile={{ file[0] }}&mode=download">download</a></td>
+                                    <th scope="col" style="cursor: pointer;">Log file</th>
+                                    <th scope="col" style="cursor: pointer;">Created Time</th>
+                                    <th scope="col" style="cursor: pointer;">Size(kb)</th>
+                                    <th scope="col" colspan="4" style="cursor: default;" class="text-center" data-sorter="false">View modes</th>
                                 </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                {% for file in files %}
+                                    <tr>
+                                        <th scope="row" class="text-wrap">{{ file[0]|truncate(30, True) }}</th>
+                                        <td class="text-wrap">{{ file[1] }}</td>
+                                        <td>{{ file[3] }}</td>
+                                        <td><a href="logs?logfile={{ file[0] }}&mode=tail">tail</a></td>
+                                        <td><a href="logs?logfile={{ file[0] }}&mode=armcat">arm</a></td>
+                                        <td><a href="logs?logfile={{ file[0] }}&mode=full">full</a></td>
+                                        <td><a href="logreader?logfile={{ file[0] }}&mode=download">download</a></td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="align-items-center mt-2">
-        <div class="card mx-auto">
-            <div class="card-header d-flex justify-content-center">
-                <strong>View Modes</strong>
+        <div class="align-items-center mt-2">
+            <div class="card mx-auto">
+                <div class="card-header d-flex justify-content-center">
+                    <strong>View Modes</strong>
+                </div>
+                <div class="d-flex justify-content-center">
+                    <p class="p-4" style="line-height: 20pt;">
+                        <strong>tail:</strong> Output to browser in real time. Similar to 'tail -f'<br/>
+                        <strong>arm:</strong> Static output of just the ARM log entries<br/>
+                        <strong>full:</strong> Static output of all of the log including MakeMKV and
+                        HandBrake<br/>
+                        <strong>download:</strong> Download the full log file<br/>
+                    </p>
+                </div>
             </div>
-            <div class="d-flex justify-content-center">
-                <p class="p-4" style="line-height: 20pt;">
-                    <strong>tail:</strong> Output to browser in real time. Similar to 'tail -f'<br/>
-                    <strong>arm:</strong> Static output of just the ARM log entries<br/>
-                    <strong>full:</strong> Static output of all of the log including MakeMKV and
-                    HandBrake<br/>
-                    <strong>download:</strong> Download the full log file<br/>
-                </p>
-            </div>
-        </div>
     </div>
 
 {% endblock %}

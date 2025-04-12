@@ -98,7 +98,12 @@ class UIConfig:
         DOCKER (bool): Indicates whether the application is running inside a Docker container.
         LOG_DIR (str): Directory where system logs are stored.
         LOG_FILENAME (str): Filename for the ARM log file.
+        LOG_PATH (str): Directory and filename for the ARM log file.
+        LOG_SIZE (int): Maximum size of the ARM log file in MB.
+        LOG_COUNT (int): Maximum number of logs to keep, for log rotation.
+        FLASK_ENV (str): The name of the environment to use for the application.
         FLASK_DEBUG (bool): Enable Flask's debug mode if `True`.
+        DEBUG (bool): Flask debug mode if `True`.
         WERKZEUG_DEBUG (bool): Enables Werkzeug's debug mode if `True`.
         ENV (str): The environment setting for Flask (e.g., 'development', 'production').
         LOGIN_DISABLED (bool): Disables login authentication if `True`.
@@ -127,13 +132,16 @@ class UIConfig:
     DOCKER: bool = is_docker()
 
     # Define system logs
-    LOG_DIR: str = '/arm/logs'
-    LOG_FILENAME: str = 'arm.log'
+    LOG_DIR: str = os.getenv("ARM_HOME", "/arm")
+    LOG_FILENAME: str = 'arm_ui.log'
+    LOG_PATH: str = os.path.join(LOG_DIR, "logs", LOG_FILENAME)
+    LOG_SIZE: int = 5
+    LOG_COUNT: int = 2
 
     # Define Flask system state
-    FLASK_ENV = "production"
-    FLASK_DEBUG = False
-    DEBUG = False
+    FLASK_ENV: str = "production"
+    FLASK_DEBUG: bool = False
+    DEBUG: bool = False
     WERKZEUG_DEBUG: bool = False
     ENV: str = 'default'
     LOGIN_DISABLED: bool = cfg.arm_config['DISABLE_LOGIN']
@@ -185,6 +193,7 @@ class Development(UIConfig):
     WERKZEUG_DEBUG: bool = True
     ENV: str = 'development'
     LOGIN_DISABLED: bool = True
+    LOGLEVEL = "DEBUG"
 
 
 class Testing(UIConfig):
@@ -198,6 +207,7 @@ class Testing(UIConfig):
     ENV: str = 'testing'
     LOGIN_DISABLED: bool = True
     TESTING: bool = True
+    LOGLEVEL = "DEBUG"
 
 
 class Production(UIConfig):

@@ -28,27 +28,66 @@ def get_info(directory: str):
         directory (str): The path to the directory from which to read file statistics.
 
     Returns:
-        list: A list of lists, where each inner list contains statistics for a file.
-          The statistics include:
-          - File name (str)
-          - Most recent access time (str) formatted according to 'DATE_FORMAT' in 'cfg.arm_config'
-          - Creation time (str) formatted according to 'DATE_FORMAT' in 'cfg.arm_config'
-          - File size (str) in kilobytes (KB), formatted with one decimal place and comma as thousand separator
+        log_dir (tuple):
+            file_list (list):
+            - filename (str): The name of the file
+            - access_time (date): formatted according to 'DATE_FORMAT' in 'cfg.arm_config'
+            - create_time (date): formatted according to 'DATE_FORMAT' in 'cfg.arm_config'
+            - file_size (str): in kilobytes (KB), formatted with one decimal place and comma as thousand separator
+            error (bool): True if an error occurred reading directory
+            error_string (str): Error string
     """
     app.logger.debug(f"Generating directory listing for: {directory}")
-    file_list = []
-    for i in os.listdir(directory):
-        if os.path.isfile(os.path.join(directory, i)):
-            file_stats = os.stat(os.path.join(directory, i))
-            file_size = os.path.getsize(os.path.join(directory, i))
-            file_size = round((file_size / 1024), 1)
-            file_size = f"{file_size :,.1f}"
-            create_time = strftime(cfg.arm_config['DATE_FORMAT'], localtime(file_stats.st_ctime))
-            access_time = strftime(cfg.arm_config['DATE_FORMAT'], localtime(file_stats.st_atime))
-            # [file,most_recent_access,created, file_size]
-            file_list.append([i, access_time, create_time, file_size])
+    log_dir = dict()
+    log_dir['file_list'] = []
+    log_dir['error'] = False
+    log_dir['error_string'] = ""
 
-    return file_list
+    # Error catch - missing directory
+    if not os.path.exists(directory):
+        app.logger.error(f"Log directory does not exist: {directory}")
+        log_dir['error'] = True
+        log_dir['error_string'] = f"Log directory does not exist: {directory}"
+        return log_dir
+
+    # Error catch - directory not valid
+    if not os.path.isdir(directory):
+        app.logger.error(f"Log path is not a directory: {directory}")
+        log_dir['error'] = True
+        log_dir['error_string'] = f"Log path is not a directory: {directory}"
+        return log_dir
+
+    # Read in the log directory and return a list of all files
+    try:
+        for i in os.listdir(directory):
+            filename = os.path.join(directory, i)
+
+            # Skip if not a file
+            if not os.path.isfile(filename):
+                continue
+
+            # Get log folder file details
+            try:
+                file_stats = os.stat(os.path.join(directory, i))
+                file_size = os.path.getsize(os.path.join(directory, i))
+                file_size = round((file_size / 1024), 1)
+                file_size = f"{file_size :,.1f}"
+                create_time = strftime(cfg.arm_config['DATE_FORMAT'], localtime(file_stats.st_ctime))
+                access_time = strftime(cfg.arm_config['DATE_FORMAT'], localtime(file_stats.st_atime))
+                log_dir['file_list'].append([i, access_time, create_time, file_size])
+            except OSError as e:
+                app.logger.warning(f"Could not access file '{filename}': {e}")
+                log_dir['error'] = True
+                log_dir['error_string'] = log_dir['error_string'].append(f"Could not access file '{filename}': {e}")
+                continue
+
+    except OSError as e:
+        app.logger.error(f"Failed to list directory '{directory}': {e}")
+        log_dir['error'] = True
+        log_dir['error_string'] = f"Failed to list directory '{directory}': {e}"
+        return log_dir
+
+    return log_dir
 
 
 def validate_logfile(logfile: str, mode: str, my_file: Path) -> None:
