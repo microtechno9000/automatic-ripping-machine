@@ -27,11 +27,14 @@ def get_git_revision_hash() -> str:
     try:
         git_hash = subprocess.check_output(['git', 'rev-parse', 'HEAD'],
                                            cwd=cfg.arm_config['INSTALLPATH']).decode('ascii').strip()
-        # Trunkate to seven characters (aligns with the github commit values reported)
+        # Trunkate to seven characters (aligns with the GitHub commit values reported)
         git_hash = git_hash[:7]
         app.logger.debug(f"GIT revision: {git_hash}")
-    except subprocess.CalledProcessError as e:
-        app.logger.debug(f"GIT revision error: {e}")
+    except (subprocess.CalledProcessError, FileNotFoundError) as e:
+        git_hash = 'unknown'
+        app.logger.error(f"GIT revision error: {e}")
+        if isinstance(e, FileNotFoundError):
+            app.logger.error("Git is not installed or not found in PATH.")
 
     return git_hash
 
@@ -40,23 +43,31 @@ def git_check_updates(current_hash) -> bool:
     """
     Check if we are on the latest commit
     """
-    git_update = subprocess.run(['git', 'fetch',
-                                 'https://github.com/automatic-ripping-machine/automatic-ripping-machine'],
-                                cwd=cfg.arm_config['INSTALLPATH'], check=False)
-    git_log = subprocess.check_output('git for-each-ref refs/remotes/origin --sort="-committerdate" | head -1',
-                                      shell=True, cwd="/opt/arm").decode('ascii').strip()
-    app.logger.debug(git_update.returncode)
-    app.logger.debug(git_log)
-    app.logger.debug(current_hash)
-    app.logger.debug(bool(re.search(rf"\A{current_hash}", git_log)))
-    return bool(re.search(rf"\A{current_hash}", git_log))
+    if current_hash == 'unknown':
+        try:
+            git_update = subprocess.run(['git', 'fetch',
+                                         'https://github.com/automatic-ripping-machine/automatic-ripping-machine'],
+                                        cwd=cfg.arm_config['INSTALLPATH'], check=False)
+            git_log = subprocess.check_output('git for-each-ref refs/remotes/origin --sort="-committerdate" | head -1',
+                                              shell=True, cwd="/opt/arm").decode('ascii').strip()
+            app.logger.debug(git_update.returncode)
+            app.logger.debug(git_log)
+            app.logger.debug(current_hash)
+            app.logger.debug(bool(re.search(rf"\A{current_hash}", git_log)))
+            return bool(re.search(rf"\A{current_hash}", git_log))
+        except (subprocess.CalledProcessError, FileNotFoundError) as e:
+            app.logger.error(f"Error in getting git info: {e}")
+            return True
+    else:
+        app.logger.error("Unable to check if we are on the latest commit")
+        return True
 
 
 def generate_comments():
     """
     load comments.json and use it for settings page
     allows us to easily add more settings later
-    :return: json
+    :return: JSON
     """
     comments_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "comments.json")
     try:

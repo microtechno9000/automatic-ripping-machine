@@ -120,7 +120,7 @@ def settings():
     arm_path = cfg.arm_config['TRANSCODE_PATH']
     media_path = cfg.arm_config['COMPLETED_PATH']
 
-    # System Drives (CD/DVD/Blueray drives)
+    # System Drives (CD/DVD/Blu-ray drives)
     drives = DriveUtils.drives_check_status()
     form_drive = SystemInfoDrives(request.form)
 
@@ -294,7 +294,7 @@ def server_info():
     """
     global redirect_settings
 
-    # System Drives (CD/DVD/Blueray drives)
+    # System Drives (CD/DVD/Blu-ray drives)
     form_drive = SystemInfoDrives(request.form)
     if request.method == 'POST' and form_drive.validate():
         # Return for POST
@@ -307,7 +307,7 @@ def server_info():
         drive.description = str(form_drive.description.data).strip()
         drive.drive_mode = str(form_drive.drive_mode.data).strip()
         db.session.commit()
-        flash(f"Updated Drive { drive.mount } details", "success")
+        flash(f"Updated Drive {drive.mount} details", "success")
         # Return to systeminfo page (refresh page)
         return redirect(redirect_settings)
     else:
@@ -334,7 +334,7 @@ def system_drive_scan():
 @login_required
 def drive_eject(eject_id):
     """
-    Server System - change state of CD/DVD/BluRay drive - toggle eject
+    Server System - change state of CD/DVD/Blu-ray drive - toggle ejecting
     """
     global redirect_settings
     drive = SystemDrives.query.filter_by(drive_id=eject_id).first()

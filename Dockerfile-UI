@@ -39,7 +39,8 @@ RUN install_clean \
       python3-pip \
       python3-venv \
       python3-dev \
-      vim && \
+      vim \
+      git && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ###########################################################
@@ -57,6 +58,7 @@ ENV PYTHONPATH=${ARM_CODE}
 
 # Set Working Directory
 WORKDIR ${ARM_CODE}
+RUN git config --global --add safe.directory ${ARM_CODE}
 
 # Install ARM UI requirements
 ###########################################################
