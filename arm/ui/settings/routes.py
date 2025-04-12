@@ -36,7 +36,6 @@ import config.config as cfg
 from ui.settings import DriveUtils
 from ui.settings.forms import SettingsForm, UiSettingsForm, AbcdeForm, SystemInfoDrives
 from ui.settings.utils import check_hw_transcode_support
-from common.ServerDetails import ServerDetails
 from ui.notifications.utils import notify
 
 # Page definitions
@@ -73,10 +72,7 @@ def settings():
     needing to open a text editor
     """
     global page_settings
-
-    app.logger.info("Test info")
-    app.logger.debug("Test debug")
-    app.logger.warning("Test warning")
+    session["page_title"] = "Settings"
 
     # stats for info page
     version = "Unknown"
@@ -84,9 +80,9 @@ def settings():
         with open(os.path.join(cfg.arm_config["INSTALLPATH"], 'VERSION')) as version_file:
             version = version_file.read().strip()
     except FileNotFoundError as e:
-        app.logger.debug(f"Error - ARM Version file not found: {e}")
+        app.logger.error(f"Error - ARM Version file not found: {e}")
     except IOError as e:
-        app.logger.debug(f"Error - ARM Version file error: {e}")
+        app.logger.error(f"Error - ARM Version file error: {e}")
 
     failed_rips = Job.query.filter_by(status="fail").count()
     total_rips = Job.query.filter_by().count()
@@ -132,8 +128,6 @@ def settings():
     comments = utils.generate_comments()
     form = SettingsForm()
 
-    session["page_title"] = "Settings"
-
     return render_template(page_settings,
                            settings=cfg.arm_config,
                            ui_settings=armui_cfg,
@@ -141,7 +135,6 @@ def settings():
                            apprise_cfg=cfg.apprise_config,
                            form=form,
                            jsoncomments=comments,
-                           abcde_cfg=cfg.abcde_config,
                            arm_servers=arm_servers,
                            arm_path=arm_path,
                            media_path=media_path,

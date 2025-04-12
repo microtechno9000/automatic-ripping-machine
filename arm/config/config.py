@@ -70,8 +70,5 @@ if len(cur_cfg) != len(new_cfg):
 
 arm_config = _load_config(arm_config_path)
 
-# abcde config file, open and read contents
-# abcde_config = _load_abcde(abcde_config_path)
-
 # apprise config, open and read yaml contents
 apprise_config = _load_config(apprise_config_path)
