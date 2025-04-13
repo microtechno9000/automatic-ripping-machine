@@ -59,7 +59,7 @@ def create_app(config_name=os.getenv("FLASK_ENV", "production")):
     app.logger.info(f'Starting ARM UI on interface address - {config_instance.SERVER_HOST}:{config_instance.SERVER_PORT}')
 
     # Pause ARM to ensure ARM DB is up and running
-    if config_instance.DOCKER and config_instance.ENV != 'development':
+    if config_instance.DOCKER and config_instance.ENV == 'production':
         app.logger.info("Sleeping for 60 seconds to ensure ARM DB is active")
         sleep(55)
         for i in range(5, 0, -1):

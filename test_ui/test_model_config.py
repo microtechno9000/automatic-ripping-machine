@@ -11,7 +11,7 @@ Tests:
 """
 import pytest
 
-from ui.ui_setup import db
+from models.db_setup import db
 from models.config import Config        # Model under test
 from models.job import Job              # Required relational support
 
@@ -77,7 +77,7 @@ def setup_test_data(init_db):
     db.session.add(arm_config)
     db.session.commit()
 
-    yield  # Allow test execution to proceed
+    yield arm_config  # Allow test execution to proceed
 
     # Clean up (rollback changes)
     db.session.rollback()

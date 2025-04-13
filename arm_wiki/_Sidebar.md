@@ -71,6 +71,7 @@
    - [ARM VENV](Contribute-VENV)
    - [ARM Wiki](Contribute-Wiki)
    - [ARM Testing](Contribute-Testing)
+     - [Python UI Testing](Testing-UI.md)
    - [Docker Dev guide](Contribute-Docker)
    - [ARM Development Tools (devtools)](Contribute-DevTools)
 

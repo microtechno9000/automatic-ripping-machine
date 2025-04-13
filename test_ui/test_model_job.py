@@ -12,10 +12,10 @@ Tests:
 import pytest
 from datetime import datetime
 
-from ui.ui_setup import db
+from models.db_setup import db
 from models.job import Job          # Model under test
 from models.track import Track      # Required relational support
-from test_model_config import setup_test_data as setup_config   # Required relational support
+from test_ui.test_model_config import setup_test_data as setup_config   # Required relational support
 
 
 @pytest.fixture

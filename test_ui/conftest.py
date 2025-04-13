@@ -2,11 +2,13 @@
 ARM UI Test Configuration
 Setup and define the test fixtures for ARM UI tests.
 """
-import os
 import pytest
+import os
+import sys
 
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'arm')))
 from ui import create_app
-from ui.ui_setup import db
+from models.db_setup import db
 
 
 @pytest.fixture(scope='session')
@@ -16,12 +18,13 @@ def test_app():
 
     Setup and define the test app environment
     """
-    # Set the Testing configuration prior to creating the Flask application
-    os.environ['MYSQL_IP'] = '127.0.0.1'
-    os.environ['MYSQL_USER'] = 'arm'
-    os.environ['MYSQL_PASSWORD'] = 'example'
-
+    # Load Flask with Test Config
     flask_app = create_app('testing')
+
+    # Only run if the db is connecting to arm_testing
+    if not flask_app.config["MYSQL_DATABASE"] == "arm_testing":
+        print("Testing not running with the 'testing' environment config")
+        exit(1)
 
     return flask_app
 
@@ -48,8 +51,9 @@ def init_db(test_app):
     Provide a database instance
     """
     with test_app.app_context():
-        db.create_all()     # Create tables for testing
-        yield db            # Provide db to pytest session
+        db.create_all()
 
-        db.session.remove()
-        db.drop_all()  # Drop all tables after testing
+    yield db                # Provide db to pytest session
+
+    db.session.close()      # Close connection to the test database
+    db.drop_all()           # Drop all tables after testing

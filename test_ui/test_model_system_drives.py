@@ -11,7 +11,7 @@ Tests:
 """
 import pytest
 
-from ui.ui_setup import db
+from models.db_setup import db
 from models.system_drives import SystemDrives   # Model under test
 from models.job import Job                      # Required relational support
 

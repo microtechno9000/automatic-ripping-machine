@@ -11,7 +11,7 @@ Tests:
 """
 import pytest
 
-from ui.ui_setup import db
+from models.db_setup import db
 from models.user import User       # Model under test
 
 

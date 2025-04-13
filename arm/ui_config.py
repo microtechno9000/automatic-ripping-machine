@@ -154,21 +154,24 @@ class UIConfig:
         self.SECRET_KEY: str = "Big secret key"
         self.WERKZEUG_DEBUG_PIN: str = "12345"
 
+        # Alembic config
+        self.alembic_migrations_dir: str = "/opt/arm/arm/ui/migrations"
+
         # Define the database configuration for ARM
         self.sqlitefile: str = 'sqlite:///' + cfg.arm_config['DBFILE']
         self.mysql_connector: str = 'mysql+mysqlconnector://'
         self.mysql_ip: str = os.getenv("MYSQL_IP", "127.0.0.1")
         self.mysql_user: str = os.getenv("MYSQL_USER", "arm")
         self.mysql_password: str = os.getenv("MYSQL_PASSWORD", "example")
-        self.mysql_database: str = "arm"
+        self.MYSQL_DATABASE: str = "arm"
         self.mysql_charset: str = '?charset=utf8mb4'
         self.mysql_uri: str = (
             self.mysql_connector + self.mysql_user + ':' + self.mysql_password + '@' + self.mysql_ip
-            + '/' + self.mysql_database + self.mysql_charset
+            + '/' + self.MYSQL_DATABASE + self.mysql_charset
         )
         self.mysql_uri_sanitised: str = (
             self.mysql_connector + self.mysql_user + ':*******' + '@' + self.mysql_ip
-            + '/' + self.mysql_database + self.mysql_charset
+            + '/' + self.MYSQL_DATABASE + self.mysql_charset
         )
 
         # Default database connection is MYSQL, required for Alembic
@@ -180,9 +183,6 @@ class UIConfig:
         }
         self.SQLALCHEMY_TRACK_MODIFICATIONS: bool = False
 
-        # Alembic config
-        self.alembic_migrations_dir: str = "/opt/arm/arm/ui/migrations"
-
 
 class Development(UIConfig):
     """
@@ -190,6 +190,7 @@ class Development(UIConfig):
     """
     def __init__(self):
         super().__init__()
+
         self.FLASK_ENV = "development"
         self.FLASK_DEBUG = True
         self.DEBUG = True
@@ -203,35 +204,49 @@ class Testing(UIConfig):
     """
     ARM Flask Development config
     """
-    FLASK_ENV = "development"
-    FLASK_DEBUG = True
-    DEBUG = True
-    WERKZEUG_DEBUG: bool = True
-    ENV: str = 'testing'
-    LOGIN_DISABLED: bool = True
-    TESTING: bool = True
-    LOGLEVEL = "DEBUG"
-
     def __init__(self):
         super().__init__()
-        self.mysql_database = "arm_testing"
+
+        self.FLASK_ENV = "development"
+        self.FLASK_DEBUG = True
+        self.DEBUG = True
+        self.WERKZEUG_DEBUG: bool = True
+        self.ENV: str = 'testing'
+        self.LOGIN_DISABLED: bool = True
+        self.TESTING: bool = True
+        self.LOGLEVEL = "DEBUG"
+
+        self.MYSQL_DATABASE = "arm_testing"
+
         self.mysql_uri: str = (
             self.mysql_connector + self.mysql_user + ':' + self.mysql_password + '@' + self.mysql_ip
-            + '/' + self.mysql_database + self.mysql_charset
+            + '/' + self.MYSQL_DATABASE + self.mysql_charset
         )
         self.mysql_uri_sanitised: str = (
             self.mysql_connector + self.mysql_user + ':*******' + '@' + self.mysql_ip
-            + '/' + self.mysql_database + self.mysql_charset
+            + '/' + self.MYSQL_DATABASE + self.mysql_charset
         )
+
+        # Default database connection is MYSQL, required for Alembic
+        self.SQLALCHEMY_DATABASE_URI: str = self.mysql_uri
+        # Create binds for swapping between databases during imports
+        self.SQLALCHEMY_BINDS = {
+            'sqlite': self.sqlitefile,
+            'mysql': self.mysql_uri
+        }
+        self.SQLALCHEMY_TRACK_MODIFICATIONS: bool = False
 
 
 class Production(UIConfig):
     """
     ARM Flask Production config
     """
-    DEBUG = False
-    ENV = 'production'
-    TESTING = False
+    def __init__(self):
+        super().__init__()
+
+        self.DEBUG = False
+        self.ENV = 'production'
+        self.TESTING = False
 
 
 config_classes = {

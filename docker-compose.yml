@@ -11,8 +11,8 @@ services:
       - "8080:8080"
     environment:
       # ARM environment variables and configuration
-      - ARM_UID=1000            # Set this to the ARM user id
-      - ARM_GID=1000            # Set this to the ARM user group id
+      - ARM_UID=1000            # Set this to the id of the user, as per the below volumes
+      - ARM_GID=1000            # Set this to the id of the group, as per below volumes
       - FLASK_ENV=development   # leave this commented out unless running in development or there are UI bugs
       - MYSQL_IP=arm-db         # leave unless the ARM database is on another machine
       - MYSQL_USER=arm          # this should match the MySQL database user
@@ -29,7 +29,8 @@ services:
         max-size: "10m"
         max-file: "1"
     depends_on:
-      - arm-db
+#      - arm-db
+      - arm-db-test  # use for testing of arm
     networks:
       - arm-network
     restart: unless-stopped
@@ -45,8 +46,8 @@ services:
 #      - "8080:8080"
 #    environment:
 #      # ARM environment variables and configuration
-#      - ARM_UID=1001            # Set this to the ARM user id
-#      - ARM_GID=1001            # Set this to the ARM user group id
+#      - ARM_UID=1001            # Set this to the id of the user, as per the below volumes
+#      - ARM_GID=1001            # Set this to the id of the group, as per the below volumes
 #      - MYSQL_IP=arm-db         # leave unless the ARM database is on another machine
 #      - MYSQL_USER=arm          # this should match the MySQL database user
 #      - MYSQL_PASSWORD=example  # this should match the MySQL database password
@@ -80,7 +81,7 @@ services:
   arm-db:
     image: mysql:8.3.0
     container_name: arm-db
-    user: 1001:1001                     # Set this to the arm user, $ id arm
+    user: 1000:1000                     # Set this to the user and group id of the below volume
     ports:
       - 3306:3306
     environment:
@@ -90,32 +91,30 @@ services:
       MYSQL_PASSWORD: example
     volumes:
       # Volumes for ARM db 'local directory':'MYSQL directory'
-      - /home/arm/db/mysql:/var/lib/mysql
-    command: --default-authentication-plugin=mysql_native_password
+      - /arm/db/mysql:/var/lib/mysql
     networks:
       - arm-network
     restart: unless-stopped
 
 # ARM MYSQL Test Database, details on setup in the ARM Wiki
-#  arm-db-test:
-#    image: mysql:8.3.0
-#    container_name: arm-db-test
-#    user: 1001:1001                     # Set this to the arm user, $ id arm
-#    ports:
-#      - 3306:3306
-#    environment:
-#      MYSQL_ROOT_PASSWORD: example
-#      MYSQL_DATABASE: arm
-#      MYSQL_USER: arm
-#      MYSQL_PASSWORD: example
-#    volumes:
-#      # Volumes for ARM db 'local directory':'MYSQL directory - DON'T CHANGE'
-#      # This must be a different folder to your main mysql-db directory, otherwise it will overwrite data
-#      - /home/arm/db/mysql_test:/var/lib/mysql
-#    command: --default-authentication-plugin=mysql_native_password
-#    networks:
-#      - arm-network
-#    restart: unless-stopped
+  arm-db-test:
+    image: mysql:8.3.0
+    container_name: arm-db-test
+    user: 1000:1000                     # Set this to the owner of the data volumes
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: arm_testing
+      MYSQL_USER: arm
+      MYSQL_PASSWORD: example
+    volumes:
+      # Testing uses a temporary volume, restarting the container will remove all test data
+      - type: tmpfs
+        target: /var/lib/mysql
+    networks:
+      - arm-network
+    restart: no
 
 networks:
   arm-network:
