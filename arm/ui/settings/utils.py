@@ -39,6 +39,48 @@ def get_git_revision_hash() -> str:
     return git_hash
 
 
+def git_check_version():
+    """
+    Check the current ARM version locally against the remote (GitHub) version.
+
+    This function compares the installed ARM version with the latest version available
+    in the remote GitHub repository.
+
+    :return:
+        tuple: (local_version, remote_version)
+            - local_version (str): The version currently installed locally (from the VERSION file).
+            - remote_version (str): The latest version available in the remote repository.
+    """
+
+    install_path = cfg.arm_config['INSTALLPATH']
+
+    # Read the local version from the VERSION file
+    version_file_path = os.path.join(install_path, 'VERSION')
+    try:
+        with open(version_file_path) as version_file:
+            local_version = version_file.read().strip()
+    except FileNotFoundError as e:
+        app.logger.debug(f"Error - ARM Local Version file not found: {e}")
+    except IOError as e:
+        app.logger.debug(f"Error - ARM Local Version file error: {e}")
+
+    # Read the remote version from Git (without modifying local files)
+    try:
+        remote_version = subprocess.check_output(
+            'git show origin/HEAD:VERSION', shell=True, cwd=install_path
+        ).decode('ascii').strip()
+    except (subprocess.CalledProcessError, FileNotFoundError) as e:
+        app.logger.error(f"GIT revision error: {e}")
+        if isinstance(e, FileNotFoundError):
+            app.logger.error("Git is not installed or not found in PATH.")
+        remote_version = "Unknown"
+
+    app.logger.debug(f"Local version: {local_version}")
+    app.logger.debug(f"Remote version: {remote_version}")
+
+    return local_version, remote_version
+
+
 def git_check_updates(current_hash) -> bool:
     """
     Check if we are on the latest commit

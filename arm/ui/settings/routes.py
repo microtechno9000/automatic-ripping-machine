@@ -95,8 +95,8 @@ def settings():
     current_time = datetime.now()
     server_datetime = current_time.strftime(cfg.arm_config['DATE_FORMAT'])
     server_timezone = current_time.astimezone().tzinfo
-    [arm_version_local, arm_version_remote] = ui_utils.git_check_version()
-    local_git_hash = ui_utils.get_git_revision_hash()
+    [arm_version_local, arm_version_remote] = utils.git_check_version()
+    local_git_hash = utils.get_git_revision_hash()
 
     stats = {'server_datetime': server_datetime,
              'server_timezone': server_timezone,
