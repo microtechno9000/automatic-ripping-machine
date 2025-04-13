@@ -125,75 +125,78 @@ class UIConfig:
         SQLALCHEMY_TRACK_MODIFICATIONS (bool): If `False`, disables tracking of mods to objects, which can save memory.
         alembic_migrations_dir (str): Directory where Alembic migration scripts are stored.
     """
-    # Define the ARM Server UI
-    APP_NAME: str = "Automatic Ripping Machine - User Interface"
-    SERVER_HOST: str = host_ip(cfg.arm_config['WEBSERVER_IP'])
-    SERVER_PORT: int = host_port(int(cfg.arm_config['WEBSERVER_PORT']))
-    DOCKER: bool = is_docker()
+    def __init__(self):
+        # Define the ARM Server UI
+        self.APP_NAME: str = "Automatic Ripping Machine - User Interface"
+        self.SERVER_HOST: str = host_ip(cfg.arm_config['WEBSERVER_IP'])
+        self.SERVER_PORT: int = host_port(int(cfg.arm_config['WEBSERVER_PORT']))
+        self.DOCKER: bool = is_docker()
 
-    # Define system logs
-    LOG_DIR: str = os.getenv("ARM_HOME", "/arm")
-    LOG_FILENAME: str = 'arm_ui.log'
-    LOG_PATH: str = os.path.join(LOG_DIR, "logs", LOG_FILENAME)
-    LOG_SIZE: int = 5
-    LOG_COUNT: int = 2
+        # Define system logs
+        self.LOG_DIR: str = os.getenv("ARM_HOME", "/arm")
+        self.LOG_FILENAME: str = 'arm_ui.log'
+        self.LOG_PATH: str = os.path.join(self.LOG_DIR, "logs", self.LOG_FILENAME)
+        self.LOG_SIZE: int = 5
+        self.LOG_COUNT: int = 2
 
-    # Define Flask system state
-    FLASK_ENV: str = "production"
-    FLASK_DEBUG: bool = False
-    DEBUG: bool = False
-    WERKZEUG_DEBUG: bool = False
-    ENV: str = 'default'
-    LOGIN_DISABLED: bool = cfg.arm_config['DISABLE_LOGIN']
-    TESTING: bool = False
+        # Define Flask system state
+        self.FLASK_ENV: str = "production"
+        self.FLASK_DEBUG: bool = False
+        self.DEBUG: bool = False
+        self.WERKZEUG_DEBUG: bool = False
+        self.ENV: str = 'default'
+        self.LOGIN_DISABLED: bool = cfg.arm_config['DISABLE_LOGIN']
+        self.TESTING: bool = False
 
-    LOGLEVEL: str = cfg.arm_config['LOGLEVEL']
+        self.LOGLEVEL: str = cfg.arm_config['LOGLEVEL']
 
-    # Flask keys
-    SECRET_KEY: str = "Big secret key"
-    WERKZEUG_DEBUG_PIN: str = "12345"
+        # Flask keys
+        self.SECRET_KEY: str = "Big secret key"
+        self.WERKZEUG_DEBUG_PIN: str = "12345"
 
-    # Define the database configuration for ARM
-    sqlitefile: str = 'sqlite:///' + cfg.arm_config['DBFILE']
-    mysql_connector: str = 'mysql+mysqlconnector://'
-    mysql_ip: str = os.getenv("MYSQL_IP", "127.0.0.1")
-    mysql_user: str = os.getenv("MYSQL_USER", "arm")
-    mysql_password: str = os.getenv("MYSQL_PASSWORD", "example")
-    mysql_database: str = "arm"
-    mysql_charset: str = '?charset=utf8mb4'
-    mysql_uri: str = (
-        mysql_connector + mysql_user + ':' + mysql_password + '@' + mysql_ip
-        + '/' + mysql_database + mysql_charset
-    )
-    mysql_uri_sanitised: str = (
-        mysql_connector + mysql_user + ':*******' + '@' + mysql_ip
-        + '/' + mysql_database + mysql_charset
-    )
+        # Define the database configuration for ARM
+        self.sqlitefile: str = 'sqlite:///' + cfg.arm_config['DBFILE']
+        self.mysql_connector: str = 'mysql+mysqlconnector://'
+        self.mysql_ip: str = os.getenv("MYSQL_IP", "127.0.0.1")
+        self.mysql_user: str = os.getenv("MYSQL_USER", "arm")
+        self.mysql_password: str = os.getenv("MYSQL_PASSWORD", "example")
+        self.mysql_database: str = "arm"
+        self.mysql_charset: str = '?charset=utf8mb4'
+        self.mysql_uri: str = (
+            self.mysql_connector + self.mysql_user + ':' + self.mysql_password + '@' + self.mysql_ip
+            + '/' + self.mysql_database + self.mysql_charset
+        )
+        self.mysql_uri_sanitised: str = (
+            self.mysql_connector + self.mysql_user + ':*******' + '@' + self.mysql_ip
+            + '/' + self.mysql_database + self.mysql_charset
+        )
 
-    # Default database connection is MYSQL, required for Alembic
-    SQLALCHEMY_DATABASE_URI: str = mysql_uri
-    # Create binds for swapping between databases during imports
-    SQLALCHEMY_BINDS = {
-        'sqlite': sqlitefile,
-        'mysql': mysql_uri
-    }
-    SQLALCHEMY_TRACK_MODIFICATIONS: bool = False
+        # Default database connection is MYSQL, required for Alembic
+        self.SQLALCHEMY_DATABASE_URI: str = self.mysql_uri
+        # Create binds for swapping between databases during imports
+        self.SQLALCHEMY_BINDS = {
+            'sqlite': self.sqlitefile,
+            'mysql': self.mysql_uri
+        }
+        self.SQLALCHEMY_TRACK_MODIFICATIONS: bool = False
 
-    # Alembic config
-    alembic_migrations_dir: str = "/opt/arm/arm/ui/migrations"
+        # Alembic config
+        self.alembic_migrations_dir: str = "/opt/arm/arm/ui/migrations"
 
 
 class Development(UIConfig):
     """
     ARM Flask Development config
     """
-    FLASK_ENV = "development"
-    FLASK_DEBUG = True
-    DEBUG = True
-    WERKZEUG_DEBUG: bool = True
-    ENV: str = 'development'
-    LOGIN_DISABLED: bool = True
-    LOGLEVEL = "DEBUG"
+    def __init__(self):
+        super().__init__()
+        self.FLASK_ENV = "development"
+        self.FLASK_DEBUG = True
+        self.DEBUG = True
+        self.WERKZEUG_DEBUG: bool = True
+        self.ENV: str = 'development'
+        self.LOGIN_DISABLED: bool = True
+        self.LOGLEVEL = "DEBUG"
 
 
 class Testing(UIConfig):
@@ -208,6 +211,18 @@ class Testing(UIConfig):
     LOGIN_DISABLED: bool = True
     TESTING: bool = True
     LOGLEVEL = "DEBUG"
+
+    def __init__(self):
+        super().__init__()
+        self.mysql_database = "arm_testing"
+        self.mysql_uri: str = (
+            self.mysql_connector + self.mysql_user + ':' + self.mysql_password + '@' + self.mysql_ip
+            + '/' + self.mysql_database + self.mysql_charset
+        )
+        self.mysql_uri_sanitised: str = (
+            self.mysql_connector + self.mysql_user + ':*******' + '@' + self.mysql_ip
+            + '/' + self.mysql_database + self.mysql_charset
+        )
 
 
 class Production(UIConfig):

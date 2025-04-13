@@ -466,7 +466,7 @@ def read_notification(notify_id):
     return return_json
 
 
-def get_notify_timeout():
+def get_notify_timeout(timeout):
     """Return the notification timeout UI setting"""
 
     return_json = {'success': True,
