@@ -2,27 +2,19 @@
 
 **Getting Started**
    - [Getting Started](Getting-Started)
-
-   - **Docker**
-       - [Pull prebuilt image](docker)
-       - [Build from Dockerfile](Building-ARM-docker-image-from-source)
+   - [Pull prebuilt image](Docker)
+   - [Build from Dockerfile](Docker-From-Source)
+   - [Upgrading from old versions](Docker-Upgrading)
 
    - **Manual Install**
      - See Alternate Installations
-   
-   - **Automatic script install**
-       - [Open Media Vault/ Debian (Install script)](Alternate-Install-OMV.md)
-       - [Ubuntu 20.04 (install script)](Ubuntu-20.04-Automatic-Installation)
-   - [Upgrading from old versions](upgrading)
-   - [Roadmap](Status-Roadmap)
-
 
 **Web Page Overview**
   - _Coming Soon_
-  - **Jobs**
-    - [Jobs](Web-Jobs)
-  - **Settings**
+  - [Jobs](Web-Jobs)
+  - [Settings](Web-Settings)
     - [Drive Management](Web-Settings-Drives)
+    - [UI Settings](Web-Settings-UI)
 
 **Troubleshooting**
 - [Known Issues](Status-Known-Issues)
@@ -35,14 +27,15 @@
    - [Configuration](Configuring-ARM)
 
    - **Configuration Files**
-      - [arm.yaml](config-arm.yaml)
-      - [apprise.yaml](config-apprise.yaml)
-      - [.abcde.conf](config-abcde)
-      - [Skins for ARM ui](config-ui-skins)
+      - [arm.yaml](Config-arm.yaml)
+      - [apprise.yaml](Config-apprise.yaml)
+      - [.abcde.conf](Config-abcde.conf)
+      - [Skins for ARM ui](Config-ui-skins)
       - [MakeMKV](MakeMKV-Info)
      
    - **Alternate Installations**
      - [Ubuntu](Alternate-Install-Ubuntu)
+     - [Ubuntu 20.04 (install script)](Ubuntu-20.04-Automatic-Installation)
      - [Debian](Alternate-Install-Debian)
      - [Open Media Vault](Alternate-Install-OMV)
      - [TrueNAS](Alternate-Install-TrueNAS)
