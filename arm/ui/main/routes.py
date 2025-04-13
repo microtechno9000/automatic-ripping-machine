@@ -6,12 +6,10 @@ Covers
     - index [GET]
     - dbupdate [POST]
 """
-import flask
 from flask import current_app
 from flask import render_template, session, redirect
 from flask_login import login_required
 
-from flask import current_app as app
 import config.config as cfg
 import ui.ui_utils as ui_utils
 from ui.main import route_main

@@ -5,7 +5,6 @@
 Automatic-Ripping-Machine Development Tools
     log to cli and file manager
 """
-
 from colorama import Fore, Style
 
 
@@ -15,12 +14,12 @@ def console(msg, error=None):
         INPUT: message string, error boolean (1 - error, 0 - good)
         OUTPUT: print to console
     """
-    if error is None:
-        print(msg)
-    elif error == 1:
+    if error == 1:
         print(f"{msg}\t[{Fore.RED}Error{Style.RESET_ALL}]")
-    else:
+    elif error == 0:
         print(f"{msg}\t[{Fore.GREEN}Ok{Style.RESET_ALL}]")
+    else:
+        print(msg)
 
 
 def debug(msg):

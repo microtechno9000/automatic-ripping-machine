@@ -23,11 +23,11 @@ from netifaces import interfaces, ifaddresses, AF_INET
 import arm.config.config as cfg
 from arm.ui import db  # needs to be imported before models
 from arm.models.job import Job
-from arm.models.notifications import Notifications
+# from arm.models.notifications import Notifications
 from arm.models.track import Track
 from arm.models.user import User
 from arm.models.system_drives import SystemDrives
-from arm.ripper import apprise_bulk
+# from arm.ripper import apprise_bulk
 # from arm.ripper import apprise_bulk
 
 NOTIFY_TITLE = "ARM notification"
@@ -95,35 +95,36 @@ NOTIFY_TITLE = "ARM notification"
 #             logging.error(f"Failed sending notification via bash. Continuing  processing...{error}")
 
 
-def notify_entry(job):
-    """
-    Notify On Entry\n
-    :param job:
-    :return: None
-    """
-    # TODO make this better or merge with notify/class
-    notification = Notifications(f"New Job: {job.job_id} has started. Disctype: {job.disctype}",
-                                 f"New job has started to rip - {job.label},"
-                                 f"{job.disctype} at {datetime.datetime.now()}")
-    database_adder(notification)
-    if job.disctype in ["dvd", "bluray"]:
-        if cfg.arm_config["UI_BASE_URL"] == "":
-            display_address = f"http://{check_ip()}:{job.config.WEBSERVER_PORT}"
-        else:
-            display_address = str(cfg.arm_config["UI_BASE_URL"])
-        # Send the notifications
-        notify(job, NOTIFY_TITLE,
-               f"Found disc: {job.title}. Disc type is {job.disctype}. Main Feature is {job.config.MAINFEATURE}."
-               f"Edit entry here: {display_address}/jobdetail?job_id={job.job_id}")
-    elif job.disctype == "music":
-        notify(job, NOTIFY_TITLE, f"Found music CD: {job.label}. Ripping all tracks.")
-    elif job.disctype == "data":
-        notify(job, NOTIFY_TITLE, "Found data disc.  Copying data.")
-    else:
-        notify(job, NOTIFY_TITLE, "Could not identify disc.  Exiting.")
-        args = {'status': 'fail', 'errors': "Could not identify disc."}
-        database_updater(args, job)
-        sys.exit()
+# todo: fix this as notify is now in the UI
+# def notify_entry(job):
+#     """
+#     Notify On Entry\n
+#     :param job:
+#     :return: None
+#     """
+#     # TODO make this better or merge with notify/class
+#     notification = Notifications(f"New Job: {job.job_id} has started. Disctype: {job.disctype}",
+#                                  f"New job has started to rip - {job.label},"
+#                                  f"{job.disctype} at {datetime.datetime.now()}")
+#     database_adder(notification)
+#     if job.disctype in ["dvd", "bluray"]:
+#         if cfg.arm_config["UI_BASE_URL"] == "":
+#             display_address = f"http://{check_ip()}:{job.config.WEBSERVER_PORT}"
+#         else:
+#             display_address = str(cfg.arm_config["UI_BASE_URL"])
+#         # Send the notifications
+#         notify(job, NOTIFY_TITLE,
+#                f"Found disc: {job.title}. Disc type is {job.disctype}. Main Feature is {job.config.MAINFEATURE}."
+#                f"Edit entry here: {display_address}/jobdetail?job_id={job.job_id}")
+#     elif job.disctype == "music":
+#         notify(job, NOTIFY_TITLE, f"Found music CD: {job.label}. Ripping all tracks.")
+#     elif job.disctype == "data":
+#         notify(job, NOTIFY_TITLE, "Found data disc.  Copying data.")
+#     else:
+#         notify(job, NOTIFY_TITLE, "Could not identify disc.  Exiting.")
+#         args = {'status': 'fail', 'errors': "Could not identify disc."}
+#         database_updater(args, job)
+#         sys.exit()
 
 
 def sleep_check_process(process_str, transcode_limit):
@@ -747,17 +748,19 @@ def check_for_dupe_folder(have_dupes, hb_out_path, job):
                 logging.exception(
                     "A fatal error has occurred and ARM is exiting.  "
                     "Couldn't create filesystem. Possible permission error")
-                notify(job, NOTIFY_TITLE,
-                       f"ARM encountered a fatal error processing {job.title}."
-                       f" Couldn't create filesystem. Possible permission error. ")
+                # todo: fix notifications as the function was moved to UI
+                # notify(job, NOTIFY_TITLE,
+                #        f"ARM encountered a fatal error processing {job.title}."
+                #        f" Couldn't create filesystem. Possible permission error. ")
                 database_updater({'status': "fail", 'errors': 'Creating folder failed'}, job)
                 sys.exit()
         else:
             # We aren't allowed to rip dupes, notify and exit
             logging.info("Duplicate rips are disabled.")
-            notify(job, NOTIFY_TITLE, f"ARM Detected a duplicate disc. For {job.title}. "
-                                      f"Duplicate rips are disabled. "
-                                      f"You can re-enable them from your config file. ")
+            # todo: fix notifications as the function was moved to UI
+            # notify(job, NOTIFY_TITLE, f"ARM Detected a duplicate disc. For {job.title}. "
+            #                           f"Duplicate rips are disabled. "
+            #                           f"You can re-enable them from your config file. ")
             job.eject()
             database_updater({'status': "fail", 'errors': 'Duplicate rips are disabled'}, job)
             sys.exit()

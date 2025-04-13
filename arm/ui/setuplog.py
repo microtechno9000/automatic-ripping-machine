@@ -1,8 +1,6 @@
 """
 ARM UI log definition
 """
-import logging
-from logging.handlers import RotatingFileHandler
 
 
 def setuplog(log_filename: str, max_size: int, max_count: int):

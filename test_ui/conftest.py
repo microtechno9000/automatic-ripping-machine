@@ -7,8 +7,8 @@ import os
 import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'arm')))
-from ui import create_app
-from models.db_setup import db
+from ui import create_app           # noqa: E402
+from models.db_setup import db      # noqa: E402
 
 
 @pytest.fixture(scope='session')

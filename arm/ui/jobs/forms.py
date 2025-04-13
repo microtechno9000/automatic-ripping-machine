@@ -8,7 +8,7 @@ Forms
 """
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField, BooleanField, IntegerField, FieldList, \
-    HiddenField, BooleanField, Form, FormField
+    HiddenField, Form, FormField
 from wtforms.validators import DataRequired
 
 

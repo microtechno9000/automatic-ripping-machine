@@ -56,7 +56,8 @@ def create_app(config_name=os.getenv("FLASK_ENV", "production")):
     app.logger.debug(f'Login Disabled: {config_instance.LOGIN_DISABLED}')
     if config_instance.DOCKER:
         app.logger.info('ARM UI Running within Docker, ignoring any config in arm.yml')
-    app.logger.info(f'Starting ARM UI on interface address - {config_instance.SERVER_HOST}:{config_instance.SERVER_PORT}')
+    app.logger.info('Starting ARM UI on interface address - '
+                    f'{config_instance.SERVER_HOST}:{config_instance.SERVER_PORT}')
 
     # Pause ARM to ensure ARM DB is up and running
     if config_instance.DOCKER and config_instance.ENV == 'production':

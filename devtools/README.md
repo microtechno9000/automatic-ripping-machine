@@ -2,8 +2,10 @@
 
 ## Overview
 
-Development tools to help automate testing and fault-finding when making changes the ARM main code.
-Aim of this code is to be independent of the main ARM Repo, such that no libraries are pulled into support the test code. With the intent that it is possible to run the ARM Devtools as a standalone python script. This is to avoid introducing errors into the main code from the test tool.
+Development tools to help automate testing and fault-finding when making changes to the ARM main code.
+The Aim of this code is to be independent of the main ARM Repo, such that no libraries are pulled into support the test code.
+With the intent that it is possible to run the ARM Devtools as a standalone python script.
+This is to avoid introducing errors into the main code from the test tool.
 Currently, a work in progress.
 
 ## Features
@@ -13,41 +15,53 @@ Currently, a work in progress.
     - Rebuild the docker image with updated ARM code
 - Database management
     - Remove the database file, test running of ARM on a new system
+    - _Note:_ not yet properly implemented
 - Quality Checks (runs Flake8 against all arm code)
 - PR Checks
     - Run actions prior to commiting a PR
-- Notification check, generate notifications to the UI
+- Test code
+  - Test the UI, run python unit tests
 
 
 ## Usage
-```
-$ ./armdevtools.py -h
-usage: armdevtools.py [-h] [-b B] [-dr DR] [-db_rem] [-qa] [-pr] [-n] [-v]
 
-Automatic Ripping Machine Development Tool Scripts. Note: scripts assume running on a bare
-metal server when running, unless running the specific docker rebuild scripts.
+```bash
+$ ./devtools/armdevtools.py -h
+usage: armdevtools.py [-h] [-b B] [-dr DR] [--clean] [-dc] [--monitor] [-db_rem] [-qa] [-pr]
+                      [-test_ui] [-v]
+
+Automatic Ripping Machine Development Tool Scripts. Note: scripts assume running on a bare metal
+server when running, unless running the specific docker rebuild scripts.
 
 options:
   -h, --help  show this help message and exit
   -b B        Name of the branch to move to, example -b v2_devel
-  -dr DR      Docker rebuild post ARM code update. Requires docker run script path to run.
+  -dr DR      Docker - Stop, Remove and Rebuild the ARM Docker image, leaving the container
+  --clean     Docker - Remove all ARM docker images and containers before rebuilding.
+  -dc         Docker-Compose - Remove all ARM docker images using docker-compose, rebuild and
+              start ARM.
+  --monitor   Docker-Compose - Set the '-d' status, calling --monitor will not set '-d' and
+              docker will output all text to the console.
   -db_rem     Database tool - remove current arm.db file
   -qa         QA Checks - run Flake8 against ARM
   -pr         Actions to run prior to committing a PR against ARM on github
-  -n          Notification tool - show a test notification
+  -test_ui    Test ARM UI - run pytest against test_ui folder (auto-starts developer db)
   -v          ARM Dev Tools Version
 ``````
 
 ## Requirements
 
-No unique requirements for devtools
+Dev Tools requires the below packages, which when running ARM within a python virtual environment are pulled in already.
+
+* pytest
 
 ## Install
 
-No install required, once ARM installed
+No specific installation is required.
 
 ## Troubleshooting
- Please see the [wiki](https://github.com/automatic-ripping-machine/automatic-ripping-machine/wiki/).
+
+Please see the [wiki](https://github.com/automatic-ripping-machine/automatic-ripping-machine/wiki/).
 
 ## Contributing
 

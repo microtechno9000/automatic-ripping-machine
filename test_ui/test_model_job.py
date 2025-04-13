@@ -15,11 +15,11 @@ from datetime import datetime
 from models.db_setup import db
 from models.job import Job          # Model under test
 from models.track import Track      # Required relational support
-from test_ui.test_model_config import setup_test_data as setup_config   # Required relational support
+from test_ui.test_model_config import setup_test_data as relational_setup_config   # noqa: F401
 
 
 @pytest.fixture
-def setup_test_data(setup_config):
+def setup_test_data(relational_setup_config):       # noqa: F811
     """ Fixture for setting up test data """
     # Create a sample Track associated with the job
     track = Track(1,

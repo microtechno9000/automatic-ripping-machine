@@ -11,7 +11,6 @@ Covers
 from flask_login import login_required
 from flask import render_template, redirect, flash, session
 from datetime import datetime
-from flask import current_app as app
 
 from ui.notifications import route_notifications
 from models.notifications import Notifications

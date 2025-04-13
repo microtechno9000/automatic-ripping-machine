@@ -79,12 +79,12 @@ class ServerDetails():
             self.cpu_util = psutil.cpu_percent()
         except EnvironmentError:
             self.cpu_util = 0
-        # app.logger.debug(f"Server CPU Util: {self.cpu_util}")
+        app.logger.debug(f"Server CPU Util: {self.cpu_util}")
 
     def get_cpu_temp(self):
         try:
             temps = psutil.sensors_temperatures()
-            # app.logger.debug(f"cpu_temp: {temps}")
+            app.logger.debug(f"cpu_temp: {temps}")
 
             # cpu temperature - intel systems
             if coretemp := temps.get('coretemp', None):
@@ -111,7 +111,7 @@ class ServerDetails():
                 self.cpu_temp = 0
         except EnvironmentError:
             self.cpu_temp = 0
-        # app.logger.debug(f"Server CPU Temp:  {self.cpu_temp}")
+        app.logger.debug(f"Server CPU Temp:  {self.cpu_temp}")
 
     def get_memory(self):
         try:
@@ -125,9 +125,9 @@ class ServerDetails():
             self.memory_free = 0
             self.memory_used = 0
             self.memory_percent = 0
-        # app.logger.debug(f"Server Mem Free:  {self.memory_free}")
-        # app.logger.debug(f"Server Mem Used:  {self.memory_used}")
-        # app.logger.debug(f"Server Mem Percent:  {self.memory_percent}")
+        app.logger.debug(f"Server Mem Free:  {self.memory_free}")
+        app.logger.debug(f"Server Mem Used:  {self.memory_used}")
+        app.logger.debug(f"Server Mem Percent:  {self.memory_percent}")
 
     def get_disk_space(self, filepath):
         # Hard drive space
@@ -141,7 +141,7 @@ class ServerDetails():
             # app.logger.debug("ARM folders not found")
             flash("There was a problem accessing the ARM folder: "
                   f"'{filepath}'. Please make sure you have setup ARM", "danger")
-        # app.logger.debug(f"Server {filepath} Space:  {disk_space}")
-        # app.logger.debug(f"Server {filepath} Percent:  {disk_percent}")
+        app.logger.debug(f"Server {filepath} Space:  {disk_space}")
+        app.logger.debug(f"Server {filepath} Percent:  {disk_percent}")
 
         return disk_space, disk_percent

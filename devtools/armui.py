@@ -5,56 +5,32 @@
 Automatic-Ripping-Machine Development Tools
     ARM UI management tools
 """
-
-import os
 import log
+import subprocess
 
 
-def stop():
-    """
-    Stop the ARM UI
-        INPUT: none
-        OUTPUT: none
-    """
-    try:
-        log.info("Going to stop ARMUI - requesting sudo")
-        os.system("sudo systemctl stop armui.service")
-        log.success("ARM UI stopped")
-    except Exception as error:
-        log.error(f"ARM UI unable to stop - {error}")
-
-
-def start():
-    """
-    Stop the ARM UI
-        INPUT: none
-        OUTPUT: none
-    """
-    try:
-        log.info("Going to restart ARMUI - requesting sudo")
-        os.system("sudo systemctl start armui.service")
-        log.success("ARM UI started")
-    except Exception as error:
-        log.error(f"ARM UI unable to start - {error}")
-
-
-def run_command(command, statement):
+def call_command(command: str, statement: str, func_exit: bool = False):
     """
     Run os commands and check they run
-        INPUT: STRING command, STRING statment
+        INPUT: STRING Command, STRING Statement, BOOL Function_Exit (optional)
         OUTPUT: none
     """
     try:
-        # Stop ARM container
         log.info("-------------------------------------")
         log.info(f"Executing: {command}")
-        os.system(f"{command}")
-        log.success(statement)
+        return_value = subprocess.call(command, shell=True)
+        if return_value == 0:
+            log.success(statement)
+        else:
+            log.error(f"Command [{command}] failed with exit code {return_value}")
+            if func_exit:
+                exit(1)
 
     except FileNotFoundError as error:
         log.info("\n-------------------------------------")
         log.error(f"Something has gone wrong in executing {command}")
-        log.error(f" - {error}")
+        log.info(f"error - {error}")
         log.info("ARM UI currently stopped, fix error then restart ARM UI")
         log.info("-------------------------------------")
-        exit
+        if func_exit:
+            exit(1)

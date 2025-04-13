@@ -5,7 +5,6 @@
 Automatic-Ripping-Machine Development Tools
     ARM UI management tools
 """
-
 import os
 import armui
 import log
@@ -24,16 +23,11 @@ def remove():
         INPUT: none
         OUTPUT: none
     """
-    # Stop the UI to avoid issues
-    armui.stop()
-
     log.info("Removing the ARM DB file")
 
     # Remove ARM DB file
-    armui.run_command(f"rm {path_db}{file_db}", f"ARM DB {path_db}{file_db} removed")
-
-    # Restart the UI once git has worked
-    armui.start()
+    armui.call_command(f"rm {path_db}{file_db}",
+                       f"ARM DB {path_db}{file_db} removed")
 
 
 def database_backup():

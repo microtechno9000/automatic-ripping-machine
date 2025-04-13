@@ -22,8 +22,10 @@ import argparse
 import armgit
 import database
 import armdocker
+import pytest_ui
 
-__version__ = '0.3'
+__version__ = '0.4'
+# todo: update these to system environment variables
 arm_home = "/home/arm"
 arm_install = "/opt/arm"
 
@@ -55,9 +57,12 @@ parser.add_argument("-qa",
 parser.add_argument("-pr",
                     help="Actions to run prior to committing a PR against ARM on github",
                     action="store_true")
+parser.add_argument("-test_ui",
+                    help="Test ARM UI - run pytest against test_ui folder (auto-starts developer db)",
+                    action='store_true')
 parser.add_argument("-v", help="ARM Dev Tools Version",
                     action='version',
-                    version='%(prog)s {version}'.format(version=__version__))
+                    version='Automatic Ripping Machine (ARM) - %(prog)s [{version}]'.format(version=__version__))
 
 args = parser.parse_args()
 # -b move to branch
@@ -82,3 +87,6 @@ if args.qa:
 
 if args.pr:
     armgit.pr_update()
+
+if args.test_ui:
+    pytest_ui.ui_test(arm_install)
