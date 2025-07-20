@@ -109,11 +109,15 @@ GET_AUDIO_TITLE: "musicbrainz"
 # Requires FFmpeg
 RIP_POSTER: false
 
+# Allow unidentified discs to be processed by ARM
+# True - default - will let ARM process and try
+# False - will stop and eject the disc if UNIDENTIFIED_EJECT is set to true, else will just bail
+UNIDENTIFIED_PROCESS: true
+
 # Auto-eject unidentified discs (blank etc)
 # May want to set this to false on certain (Pioneer slim) drives to prevent the immediate eject
 # issue (https://github.com/automatic-ripping-machine/automatic-ripping-machine/issues/779)
 UNIDENTIFIED_EJECT: true
-
 
 # Auto-ejects disks
 # Auto-ejects disks when complete etc

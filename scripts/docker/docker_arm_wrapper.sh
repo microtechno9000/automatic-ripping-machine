@@ -58,12 +58,15 @@ elif [ "$ID_FS_TYPE" != "" ]; then
 	  echo "[ARM] Starting ARM for Data Disk on ${DEVNAME} with File System ${ID_FS_TYPE}" | logger -t ARM -s
 	  echo "$(date) [[ARM] Starting ARM for Data Disk on ${DEVNAME} with File System ${ID_FS_TYPE}" >> $ARMLOG
 else
-	  echo "[ARM] Not CD, Blu-ray, DVD or Data. Bailing out on ${DEVNAME}" | logger -t ARM -s
-	  echo "$(date) [ARM] Not CD, Blu-ray, DVD or Data. Bailing out on ${DEVNAME}" >> $ARMLOG
-      if [ "$CONFIG_UNIDENTIFIED_EJECT" != "false" ]; then
-	    eject "${DEVNAME}"
-      fi
-	  exit #bail out
+      if [ "$CONFIG_UNIDENTIFIED_PROCESS" != "false" ]; then
+        echo "[ARM] Not CD, Blu-ray, DVD or Data. Bailing out on ${DEVNAME} as UNIDENTIFIED_PROCESS: [false]" | logger -t ARM -s
+        echo "$(date) [ARM] Not CD, Blu-ray, DVD or Data. Bailing out on ${DEVNAME}" >> $ARMLOG
+        if [ "$CONFIG_UNIDENTIFIED_EJECT" != "false" ]; then
+            eject "${DEVNAME}"
+        fi
+	  else
+        echo "[ARM] Not CD, Blu-ray, DVD or Data. Not going to bail out on ${DEVNAME} as UNIDENTIFIED_PROCESS: [true]" | logger -t ARM -s
+	  fi
 fi
 cd /home/arm
 /usr/bin/python3 /opt/arm/arm/ripper/main.py -d "${DEVNAME}" | logger -t ARM -s
