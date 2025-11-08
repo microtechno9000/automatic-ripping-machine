@@ -24,8 +24,7 @@ import database
 import armdocker
 import pytest_ui
 
-__version__ = '0.4'
-# todo: update these to system environment variables
+__version__ = '0.5'
 arm_home = "/home/arm"
 arm_install = "/opt/arm"
 
@@ -34,8 +33,6 @@ desc = "Automatic Ripping Machine Development Tool Scripts. " \
        "Note: scripts assume running on a bare metal server when running, " \
        "unless running the specific docker rebuild scripts."
 parser = argparse.ArgumentParser(description=desc)
-parser.add_argument("-b",
-                    help="Name of the branch to move to, example -b v2_devel")
 parser.add_argument("-dr",
                     help="Docker - Stop, Remove and Rebuild the ARM Docker image, leaving the container")
 parser.add_argument("--clean",
@@ -48,9 +45,6 @@ parser.add_argument("--monitor",
                     help="Docker-Compose - Set the '-d' status, calling --monitor will not set '-d' and docker"
                          " will output all text to the console.",
                     action="store_true")
-parser.add_argument("-db_rem",
-                    help="Database tool - remove current arm.db file",
-                    action='store_true')
 parser.add_argument("-qa",
                     help="QA Checks - run Flake8 against ARM",
                     action='store_true')
@@ -65,10 +59,6 @@ parser.add_argument("-v", help="ARM Dev Tools Version",
                     version='Automatic Ripping Machine (ARM) - %(prog)s [{version}]'.format(version=__version__))
 
 args = parser.parse_args()
-# -b move to branch
-if args.b:
-    armgit.git_branch_change(args.b, arm_install)
-
 # -dr Docker ARM update and rebuild
 if args.dr:
     armdocker.docker_rebuild(args.dr, arm_install, args.clean)
@@ -76,10 +66,6 @@ if args.dr:
 # -dc docker-compose and options --monitor
 if args.dc:
     armdocker.dockercompose_rebuild(args.monitor)
-
-# -db_rem Database remove
-if args.db_rem:
-    database.remove()
 
 # -qa Quality Checks against ARM
 if args.qa:

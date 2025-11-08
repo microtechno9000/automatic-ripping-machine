@@ -17,19 +17,6 @@ file_db = "arm.db"
 path_alembic = "/opt/arm/arm/migrations"
 
 
-def remove():
-    """
-    Remove the current ARM database file
-        INPUT: none
-        OUTPUT: none
-    """
-    log.info("Removing the ARM DB file")
-
-    # Remove ARM DB file
-    armui.call_command(f"rm {path_db}{file_db}",
-                       f"ARM DB {path_db}{file_db} removed")
-
-
 def database_backup():
     """
     Backup the arm database file, prior to removing
@@ -46,14 +33,3 @@ def database_backup():
     except Exception as error:
         log.error("Something has gone wrong, unable backup the database")
         log.error(f" - {error}")
-
-
-def data():
-    """
-    Populate the current database with dummy test data
-        INPUT: none
-        OUTPUT: none
-    """
-    # todo, make this do something
-    # log.info("insert some data into the db")
-    log.info("not currently supported")

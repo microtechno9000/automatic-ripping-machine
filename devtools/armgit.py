@@ -55,35 +55,3 @@ def pr_update():
     # unittest - ripper
     armui.call_command("python3 -m unittest discover -s /opt/arm/test/unittest -p 'test_ripper*.py' -v",
                        "ARM ripper unittest completed")
-
-
-def git_branch_change(git_branch, arm_install):
-    """Change the git repository branch to another
-        INPUT: git_branch
-        OUTPUT: none
-    """
-    if git_branch:
-        log.info(f"Change the current git branch to - {git_branch}")
-
-        os.system(f"cd {arm_install}")
-        try:
-            os.system(f"git checkout {git_branch}")
-            log.info(f"ARM branch: {git_branch} checked out")
-        except Exception as error:
-            log.error(f"Something has gone wrong, unable to check out {git_branch}")
-            log.error(f" - {error}")
-            log.info("ARM UI currently stopped, fix git error then restart ARM UI")
-
-    else:
-        log.error("No branch has been provided")
-
-
-def arm_clear_data():
-    """
-    Clear data from the ARM home directory
-        INPUT: git_branch
-        OUTPUT: none
-    """
-    # todo, read the location from the arm config file
-    # log.console(f"remove data from the home folder: {arm_home}")
-    log.info("not currently supported")
