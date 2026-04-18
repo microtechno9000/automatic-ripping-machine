@@ -5,7 +5,6 @@
 Automatic-Ripping-Machine Development Tools
     Flake quality checks
 """
-import os
 import armui
 import log
 

@@ -19,10 +19,6 @@ from models.user import User
 from ui.auth import route_auth
 from ui.auth.forms import SetupForm
 
-# Page definitions
-page_support_databaseupdate = "support/databaseupdate.html"
-redirect_settings = "/settings"
-
 
 # @app.login_manager.user_loader
 def load_user(user_id):
@@ -53,7 +49,6 @@ def login():
     Login page if login is enabled
     :return: redirect
     """
-    global page_support_databaseupdate
 
     # Check the database is current
     # db_update = ui_utils.arm_db_check()

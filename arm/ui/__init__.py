@@ -16,6 +16,10 @@ from models.db_setup import db
 from ui.ui_setup import migrate, csrf, login_manager
 from ui_config import config_classes
 
+# Global Page Definitions
+page_settings = "settings.html"
+redirect_settings = "/settings"
+
 
 def create_app(config_name=os.getenv("FLASK_ENV", "production")):
     """

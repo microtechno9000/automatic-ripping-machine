@@ -20,7 +20,6 @@ Automatic-Ripping-Machine Development Tools
 import argparse
 
 import armgit
-import database
 import armdocker
 import pytest_ui
 

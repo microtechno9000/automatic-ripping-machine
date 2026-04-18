@@ -71,7 +71,7 @@ def get_info(directory: str):
                 file_stats = os.stat(os.path.join(directory, i))
                 file_size = os.path.getsize(os.path.join(directory, i))
                 file_size = round((file_size / 1024), 1)
-                file_size = f"{file_size :,.1f}"
+                file_size = f"{file_size:,.1f}"
                 create_time = strftime(cfg.arm_config['DATE_FORMAT'], localtime(file_stats.st_ctime))
                 access_time = strftime(cfg.arm_config['DATE_FORMAT'], localtime(file_stats.st_atime))
                 log_dir['file_list'].append([i, access_time, create_time, file_size])

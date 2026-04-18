@@ -24,6 +24,7 @@ from flask import current_app as app
 from datetime import datetime
 import logging
 
+from ui import page_settings, redirect_settings
 from ui.settings import route_settings
 from ui.settings import utils
 from ui import db
@@ -36,10 +37,6 @@ from ui.settings import DriveUtils
 from ui.settings.forms import SettingsForm, UiSettingsForm, AbcdeForm, SystemInfoDrives
 from ui.settings.utils import check_hw_transcode_support
 from ui.notifications.utils import notify
-
-# Page definitions
-page_settings = "settings.html"
-redirect_settings = "/settings"
 
 
 @route_settings.route('/debug_logging')
@@ -70,7 +67,7 @@ def settings():
     Overview - allows the user to update the all configs of A.R.M without
     needing to open a text editor
     """
-    global page_settings
+
     session["page_title"] = "Settings"
 
     failed_rips = Job.query.filter_by(status="fail").count()
@@ -284,7 +281,6 @@ def server_info():
     Method - POST
     Overview - Save 'System Info' page settings to a database, Not a user page
     """
-    global redirect_settings
 
     # System Drives (CD/DVD/Blu-ray drives)
     form_drive = SystemInfoDrives(request.form)
@@ -315,7 +311,7 @@ def system_drive_scan():
     Method - GET
     Overview - Scan for the system drives and update the database.
     """
-    global redirect_settings
+
     # Update to scan for changes to the ARM system
     new_count = DriveUtils.drives_update()
     flash(f"ARM found {new_count} new drives", "success")
@@ -328,7 +324,7 @@ def drive_eject(eject_id):
     """
     Server System - change state of CD/DVD/Blu-ray drive - toggle ejecting
     """
-    global redirect_settings
+
     drive = SystemDrives.query.filter_by(drive_id=eject_id).first()
     drive.open_close()
     db.session.commit()
@@ -341,7 +337,7 @@ def drive_remove(remove_id):
     """
     Server System - remove a drive from the ARM UI
     """
-    global redirect_settings
+
     try:
         app.logger.debug(f"Removing drive {remove_id}")
         drive = SystemDrives.query.filter_by(drive_id=remove_id).first()
@@ -399,7 +395,7 @@ def testapprise():
     Method - GET
     Overview - Send a test notification to Apprise.
     """
-    global redirect_settings
+
     # Send a sample notification
     message = "This is a notification by the ARM-Notification Test!"
     if cfg.arm_config["UI_BASE_URL"] and cfg.arm_config["WEBSERVER_PORT"]:

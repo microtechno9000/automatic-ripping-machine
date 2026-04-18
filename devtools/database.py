@@ -6,7 +6,6 @@ Automatic-Ripping-Machine Development Tools
     ARM UI management tools
 """
 import os
-import armui
 import log
 import datetime
 
