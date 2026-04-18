@@ -30,7 +30,7 @@ services:
         max-file: "1"
     depends_on:
       - arm-db
-#      - arm-db-test  # use for testing of arm
+      #- arm-db-test  # use for testing of arm
     networks:
       - arm-network
     restart: unless-stopped
@@ -77,7 +77,7 @@ services:
 #      - arm-network
 #    restart: unless-stopped
 
-  # Image for the Automatic Ripping Machine Database, using MySql
+  # Automatic Ripping Machine - MySQL main production database
   arm-db:
     image: mysql:8.3.0
     container_name: arm-db
@@ -96,25 +96,25 @@ services:
       - arm-network
     restart: unless-stopped
 
-# ARM MYSQL Test Database, details on setup in the ARM Wiki
-  # arm-db-test:
-  #   image: mysql:8.3.0
-  #   container_name: arm-db-test
-  #   user: 1000:1000                     # Set this to the owner of the data volumes
-  #   ports:
-  #     - 3306:3306
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: example
-  #     MYSQL_DATABASE: arm_testing
-  #     MYSQL_USER: arm
-  #     MYSQL_PASSWORD: example
-  #   volumes:
-  #     # Testing uses a temporary volume, restarting the container will remove all test data
-  #     - type: tmpfs
-  #       target: /var/lib/mysql
-  #   networks:
-  #     - arm-network
-  #   restart: no
+  # Automatic Ripping Machine - MySQL test database
+  arm-db-test:
+    image: mysql:8.3.0
+    container_name: arm-db-test
+    user: 1000:1000                     # Set this to the owner of the data volumes
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: arm_testing
+      MYSQL_USER: arm
+      MYSQL_PASSWORD: example
+    volumes:
+      # Testing uses a temporary volume, restarting the container will remove all test data
+      - type: tmpfs
+        target: /var/lib/mysql
+    networks:
+      - arm-network
+    restart: no
 
 networks:
   arm-network:

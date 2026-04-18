@@ -173,6 +173,75 @@ INFO: Going to restart ARMUI - requesting sudo
 INFO: ARM UI started    [Ok]
 ```
 
+### [-test_ui] ARM Test User Interface
+Runs the ARM User Interface (UI) unit tests against the code.
+Requires:
+- `arm-db-test` running and `arm-db` stopped [handled by script]
+- pytest installed
+
+```bash
+$ pip3 install -r requirements_ui.txt
+```
+
+*Example Passing Test*
+
+```bash
+$ ./devtools/armdevtools.py -test_ui
+INFO: -------------------------------------
+INFO: Executing: docker compose stop arm-db
+[+] Stopping 1/1
+ ✔ Container arm-db  Stopped                                                                                                                                    0.0s
+INFO: Stopped ARM main DB       [Ok]
+INFO: -------------------------------------
+INFO: Executing: docker compose start arm-db-test
+INFO: Started ARM test DB       [Ok]
+INFO: -------------------------------------
+INFO: Executing: /opt/arm/.venv/bin/python -m pytest test_ui --maxfail=1 -v
+======================================================================== test session starts ========================================================================
+platform linux -- Python 3.12.3, pytest-8.1.1, pluggy-1.6.0 -- /opt/arm/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /opt/arm
+collected 16 items
+
+test_ui/test_bp_errors.py::test_errors_404 PASSED                                                                                                             [  6%]
+test_ui/test_bp_errors.py::test_errors_500 PASSED                                                                                                             [ 12%]
+test_ui/test_model_alembic_version.py::test_query_alembic_version PASSED                                                                                      [ 18%]
+test_ui/test_model_config.py::test_create_config PASSED                                                                                                       [ 25%]
+test_ui/test_model_config.py::test_query_config PASSED                                                                                                        [ 31%]
+test_ui/test_model_job.py::test_create_job PASSED                                                                                                             [ 37%]
+test_ui/test_model_job.py::test_job_attributes PASSED                                                                                                         [ 43%]
+test_ui/test_model_notifications.py::test_create_notifications PASSED                                                                                         [ 50%]
+test_ui/test_model_notifications.py::test_query_notifications PASSED                                                                                          [ 56%]
+test_ui/test_model_system_drives.py::test_create_system_drives PASSED                                                                                         [ 62%]
+test_ui/test_model_system_drives.py::test_query_system_drives PASSED                                                                                          [ 68%]
+test_ui/test_model_system_info.py::test_create_system_info PASSED                                                                                             [ 75%]
+test_ui/test_model_system_info.py::test_query_system_info PASSED                                                                                              [ 81%]
+test_ui/test_model_ui_settings.py::test_query_ui_settings PASSED                                                                                              [ 87%]
+test_ui/test_model_user.py::test_create_user PASSED                                                                                                           [ 93%]
+test_ui/test_model_user.py::test_query_user PASSED                                                                                                            [100%]
+
+========================================================================= warnings summary ==========================================================================
+test_ui/test_model_system_info.py::test_create_system_info
+test_ui/test_model_system_info.py::test_query_system_info
+  /opt/arm/test_ui/test_model_system_info.py:62: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    system_info.last_update_time = datetime.datetime.utcnow()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================================================================== 16 passed, 2 warnings in 0.90s ===================================================================
+INFO: Test executed for ARM UI  [Ok]
+INFO: -------------------------------------
+INFO: Executing: docker compose stop arm-db-test
+[+] Stopping 1/1
+ ✔ Container arm-db-test  Stopped                                                                                                                               0.8s
+INFO: Stopped ARM test DB       [Ok]
+INFO: -------------------------------------
+INFO: Executing: docker compose start arm-db
+[+] Running 1/1
+ ✔ Container arm-db  Started                                                                                                                                    0.1s
+INFO: Restarted ARM main DB     [Ok]
+
+```
+
 ### [-v] Devtools version
 Reports the current version of devtools
 
